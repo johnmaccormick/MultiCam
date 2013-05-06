@@ -33,7 +33,7 @@ namespace MultiCam
                 {
                     MulticamLog.Log(e);
                     MessageBox.Show("MultiCam encountered an unexpected problem, " +
-                        "and will now restart.\r\n" +
+                        "and will now close.\r\n" +
                         "Please accept our apologies!");
                     // Application.Restart() caused problems, so gave up on it.
                     form1.Close();

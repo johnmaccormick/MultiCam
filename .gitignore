@@ -30,6 +30,7 @@ ipch/
 *.user
 *.suo
 *.pfx
+*.opensdf
 */old/*
 */auto/*
 *~
