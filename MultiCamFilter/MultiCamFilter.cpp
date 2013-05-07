@@ -34,7 +34,7 @@ using namespace std;
 #define hrOKnoRet VCAM_ASSERT(SUCCEEDED(hr))
 #define VCAM_BAIL(_x_) if (!(_x_)) {return MULTICAM_FAIL;}
 
-char* MultiCamVersion = "1.0.2.13";
+char* MultiCamVersion = "1.0.2.15";
 
 //WCHAR *UPSTREAM_DEVICE_FRIENDLY_NAME[] = {L"PushSource Bitmap Filter"};
 //WCHAR *UPSTREAM_DEVICE_FRIENDLY_NAME[] = {L"Logitech Webcam 250"};

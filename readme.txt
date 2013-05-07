@@ -52,7 +52,7 @@ friendly name, as output by the above DeviceEnumerator.exe
 executable. For example:
 
 PlayCap.exe "Microsoft LifeCam VX-3000"
-PlayCap.exe Multicam
+PlayCap.exe MultiCam
 
 With multiple arguments, this executable can also be used to connect
 multiple DirectShow filters in a chain.  However, this functionality

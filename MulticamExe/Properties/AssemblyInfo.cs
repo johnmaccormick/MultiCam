@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 // ---Tag for easy search: MultiCamVersion---
-[assembly: AssemblyVersion("1.0.2.13")]
-[assembly: AssemblyFileVersion("1.0.2.13")]
+[assembly: AssemblyVersion("1.0.2.15")]
+[assembly: AssemblyFileVersion("1.0.2.15")]
