@@ -477,13 +477,19 @@ HRESULT CVCamStream::GetMediaType(int iPosition, CMediaType *pmt)
 {
 	vcamLog(50, "CVCamStream::GetMediaType, iPosition = %d", iPosition);
 
-    if(iPosition < 0) return E_INVALIDARG;
-    if(iPosition > 8) return VFW_S_NO_MORE_ITEMS;
+    if(iPosition < 0) {
+		vcamLog(50, "    GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
+		return E_INVALIDARG;
+	}
+    if(iPosition > 8) {
+		vcamLog(50, "    GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
+		return VFW_S_NO_MORE_ITEMS;
+	}
 	
     if(iPosition == 0) 
     {
         *pmt = m_mt;
-		vcamLog(50, "    GetMediaType returning S_OK");
+		vcamLog(50, "    GetMediaType returning S_OK (0x%x)", S_OK);
         return S_OK;
     }
 
@@ -513,7 +519,10 @@ HRESULT CVCamStream::GetMediaType(int iPosition, CMediaType *pmt)
     pmt->SetSubtype(&SubTypeGUID);
     pmt->SetSampleSize(pvi->bmiHeader.biSizeImage);
     
-	vcamLog(50, "    GetMediaType returning NOERROR");
+	vcamLog(50, "CVCamStream::GetMediaType: got media type:");
+	vcamLogFormat(50, pmt);
+
+	vcamLog(50, "    GetMediaType returning NOERROR (0x%x)", NOERROR);
     return NOERROR;
 
 } // GetMediaType
