@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeviceEnumerator", "DeviceE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MulticamExe", "MulticamExe\MulticamExe.csproj", "{E90CF392-B791-4EC0-9BAF-17A700630BC3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HybridCam", "HybridCam\HybridCam.vcxproj", "{05CD8680-D285-4D27-8D81-2E036393F4AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,20 @@ Global
 		{E90CF392-B791-4EC0-9BAF-17A700630BC3}.Release|x64.ActiveCfg = Release|x86
 		{E90CF392-B791-4EC0-9BAF-17A700630BC3}.Release|x86.ActiveCfg = Release|x86
 		{E90CF392-B791-4EC0-9BAF-17A700630BC3}.Release|x86.Build.0 = Release|x86
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|Win32.Build.0 = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|x64.ActiveCfg = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Debug|x86.ActiveCfg = Debug|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Any CPU.ActiveCfg = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Win32.ActiveCfg = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Win32.Build.0 = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|x64.ActiveCfg = Release|Win32
+		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

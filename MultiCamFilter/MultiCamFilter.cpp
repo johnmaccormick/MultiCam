@@ -65,7 +65,7 @@ char* MultiCamVersion = "1.0.2.15";
 //											L"PushSource Bitmap Filter",
 //};
 
-GUID UNACCEPTABLE_CAMERA_GUIDS[] = {CLSID_Multicam, CLSID_VirtualCamDoubler, CLSID_VirtualCamClone
+GUID UNACCEPTABLE_CAMERA_GUIDS[] = {CLSID_Multicam, CLSID_HybridCam, CLSID_VirtualCamDoubler, CLSID_VirtualCamClone
 									, CLSID_VirtualCam3, CLSID_VirtualCam2, CLSID_VirtualCam
 									, CLSID_GoogleAdapter0 
 									, CLSID_GoogleAdapter1
