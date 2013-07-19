@@ -407,10 +407,35 @@ HRESULT MultiCamOutputPin::GetMediaType(int iPosition, CMediaType *pMediaType)
 	if(*(m_mt.FormatType()) == GUID_NULL) {
 			hr = InitializeMediaType();
 			hrOK;
+			vcamLog(1, "    MultiCamOutputPin::GetMediaType: InitializeMediaType() succeeded");
+			hr = pMediaType->Set(m_mt);
+			hrOK;
+			vcamLog(1, "    MultiCamOutputPin::GetMediaType: pMediaType->Set(m_mt) succeeded");
+			goto done;
 	}
+
+	if(!m_pTransformFilter->m_pInput->IsConnected()) {
+		vcamLog(1, "    MultiCamOutputPin::GetMediaType: Input isn't connected !!**");
+		// hope for the best??? -- nope, crashes as m_pGraph!=NULL
+		//hr = m_pParent->ConnectUpstream();
+		//vcamLog(1, "    MultiCamOutputPin::GetMediaType: ConnectUpstream returned 0x%x !!**", hr);
+	}
+
 	hr = CTransformOutputPin::GetMediaType(iPosition, pMediaType);
 
-	vcamLog(10, "    MultiCamOutputPin::GetMediaType, returning 0x%x", hr);
+done:
+	char* hr_string = "unknown";
+	if (hr == S_OK) {
+		hr_string = "S_OK";
+	} else if (hr == VFW_S_NO_MORE_ITEMS) {
+		hr_string = "VFW_S_NO_MORE_ITEMS";
+	} else if (hr == E_INVALIDARG) {
+		hr_string = "E_INVALIDARG";
+	} else if (hr == E_UNEXPECTED) {
+		hr_string = "E_UNEXPECTED";
+	} 
+
+	vcamLog(10, "    MultiCamOutputPin::GetMediaType, returning 0x%x (%s)", hr, hr_string);
     return hr;
 }
 
@@ -426,5 +451,20 @@ HRESULT MultiCamOutputPin::CheckMediaType(const CMediaType *mt)
 	hr = CTransformOutputPin::CheckMediaType(mt);
 
 	vcamLog(10, "    MultiCamOutputPin::CheckMediaType, returning 0x%x", hr);
+    return hr;		
+}
+
+HRESULT MultiCamOutputPin::AttemptConnection(
+        IPin* pReceivePin,      // connect to this pin
+        const CMediaType* pmt   // using this type
+    )
+{
+	vcamLog(10, "MultiCamOutputPin::AttemptConnection");
+	
+	HRESULT hr = S_OK;
+
+	hr = CBasePin::AttemptConnection(pReceivePin, pmt);
+
+	vcamLog(10, "    MultiCamOutputPin::AttemptConnection, returning 0x%x", hr);
     return hr;		
 }

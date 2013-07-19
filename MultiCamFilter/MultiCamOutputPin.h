@@ -36,6 +36,11 @@ public:
 	virtual HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
 	virtual HRESULT CheckMediaType(const CMediaType *);
 
+	virtual HRESULT AttemptConnection(
+        IPin* pReceivePin,      // connect to this pin
+        const CMediaType* pmt   // using this type
+    );
+
 	//////////////////////////////////////////////////////////////////////////
 	//  IKsPropertySet
 	//////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,7 @@ void __stdcall vcamLogFormat(int verbosity, ofstream& out, const AM_MEDIA_TYPE *
 static ofstream debugOut;
 static int numUsers;
 static const int verbosityLevel = 100;
+static const BOOL logTimes = FALSE;
 static BOOL openedOK = FALSE;
 static BOOL showedLogWarning = FALSE;
 static CCritSec debugLock;
@@ -124,10 +125,13 @@ void __stdcall vcamLogInternal(int verbosity, ofstream &out, char* message)
 		}
 		if (openedOK) 
 		{
-			out 
-				<< t.wMonth << "/" << t.wDay << "/" << t.wYear << ","
-				<< t.wHour << ":" << t.wMinute << ":" << t.wSecond << "." << t.wMilliseconds << ": " 
-				<< message << endl;
+			if (logTimes) {
+				out 
+					<< t.wMonth << "/" << t.wDay << "/" << t.wYear << ","
+					<< t.wHour << ":" << t.wMinute << ":" << t.wSecond << "." << t.wMilliseconds << ": "; 
+
+			}
+			out << message << endl;
 		}
 	}
 #endif
