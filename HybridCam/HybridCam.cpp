@@ -76,17 +76,18 @@ CUnknown * WINAPI CHybridCam::CreateInstance(LPUNKNOWN lpunk, HRESULT *phr)
 }
 
 CHybridCam::CHybridCam(LPUNKNOWN lpunk, HRESULT *phr) : 
-    CSource(NAME("HybridCam"), lpunk, CLSID_HybridCam)
+    //CSource(NAME("HybridCam"), lpunk, CLSID_HybridCam)
+		CTransformFilter(NAME("HybridCam"), lpunk, CLSID_HybridCam)
 {
 	//m_debugOut.exceptions(ios::failbit);
 	//m_debugOut.open(VCAM1_DEBUG_FNAME, ios_base::out | ios_base::app );
 	vcamOpenLog(10, "CHybridCam::CHybridCam");
 	vcamLog(10, "***********************CHybridCam::CHybridCam***********************");
     ASSERT(phr);
-    CAutoLock cAutoLock(&m_cStateLock);
+    CAutoLock cAutoLock(&m_csFilter);
     // Create the one and only output pin
-    m_paStreams = (CSourceStream **) new CHybridCamStream*[1];
-    m_paStreams[0] = new CHybridCamStream(phr, this, L"Virtual Cam");
+    m_pOutput = new CHybridCamStream(phr, this, L"HybridCam output pin");
+    ASSERT(phr);
 
 
 }
@@ -110,7 +111,7 @@ HRESULT CHybridCam::QueryInterface(REFIID riid, void **ppv)
     //Forward request for IAMStreamConfig & IKsPropertySet to the pin
     if(riid == _uuidof(IAMStreamConfig) || riid == _uuidof(IKsPropertySet))
 	{
-		hr = m_paStreams[0]->QueryInterface(riid, ppv);
+		hr = m_pOutput->QueryInterface(riid, ppv);
 		vcamLog(50, "CHybridCam::QueryInterface, riid = %s", guidString);
 		if (hr==S_OK) {
 			vcamLog(50, "       S_OK");
@@ -125,8 +126,8 @@ HRESULT CHybridCam::QueryInterface(REFIID riid, void **ppv)
 	}
     else
 	{
-		hr = CSource::QueryInterface(riid, ppv);
-		vcamLog(50, "CHybridCam::QueryInterface (to CSource), riid = %s", guidString);
+		hr = CTransformFilter::QueryInterface(riid, ppv);
+		vcamLog(50, "CHybridCam::QueryInterface (to CTransformFilter), riid = %s", guidString);
 		if (hr==S_OK) {
 			vcamLog(50, "       S_OK");
 		}
@@ -196,8 +197,18 @@ STDMETHODIMP CHybridCam::JoinFilterGraph(
 // 1. from CSource
 CBasePin *CHybridCam::GetPin(int n)
 {
-	vcamLog(50, "CHybridCam::GetPin, n = %d", n);
-	CBasePin *pin = CSource::GetPin(n);
+	CBasePin *pin = NULL;
+ 	vcamLog(50, "CHybridCam::GetPin, n = %d", n);
+	if (n==0) {
+		pin = m_pOutput;
+	}
+	//else if (n==1) {
+ //       return m_pOutput;
+ //   }
+	else {
+        return NULL;
+    }
+	//CBasePin *pin = CTransformFilter::GetPin(n);
 	ASSERT(pin!=NULL);
 	if(pin->IsConnected()) {
 		vcamLog(50, "  CHybridCam::GetPin: pin is connected");
@@ -215,7 +226,8 @@ CBasePin *CHybridCam::GetPin(int n)
 int CHybridCam::GetPinCount()
 {
 	vcamLog(50, "CHybridCam::GetPinCount");
-	return CSource::GetPinCount();
+	return 1;
+	//return CTransformFilter::GetPinCount();
 }
 
 
@@ -225,62 +237,69 @@ int CHybridCam::GetPinCount()
 HRESULT CHybridCam::StreamTime(CRefTime& rtStream)
 {
 	vcamLog(50, "CHybridCam::StreamTime");
-	return CSource::StreamTime(rtStream);
+	return CTransformFilter::StreamTime(rtStream);
 }
 
 LONG CHybridCam::GetPinVersion()
 {
 	vcamLog(50, "CHybridCam::GetPinVersion");
-	return CSource::GetPinVersion();
+	return CTransformFilter::GetPinVersion();
 }
 
 __out_opt LPAMOVIESETUP_FILTER CHybridCam::GetSetupData()
 {
 	vcamLog(50, "CHybridCam::GetSetupData");
-	return CSource::GetSetupData();
+	return CTransformFilter::GetSetupData();
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::EnumPins(__out  IEnumPins **ppEnum)
 {
 	vcamLog(50, "CHybridCam::EnumPins");
-	return CSource::EnumPins(ppEnum);
+	return CTransformFilter::EnumPins(ppEnum);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::FindPin(LPCWSTR Id, __out  IPin **ppPin)
 {
 	vcamLog(50, "CHybridCam::FindPin");
-	return CSource::FindPin(Id, ppPin);
+	return CTransformFilter::FindPin(Id, ppPin);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::QueryFilterInfo(__out  FILTER_INFO *pInfo)
 {
 	vcamLog(50, "CHybridCam::QueryFilterInfo");
-	return CSource::QueryFilterInfo(pInfo);
+	return CTransformFilter::QueryFilterInfo(pInfo);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::QueryVendorInfo(__out  LPWSTR *pVendorInfo)
 {
 	vcamLog(50, "CHybridCam::QueryVendorInfo");
-	return CSource::QueryVendorInfo(pVendorInfo);
+	return CTransformFilter::QueryVendorInfo(pVendorInfo);
 }
 
 
 HRESULT STDMETHODCALLTYPE CHybridCam::Stop( void)
 {
 	vcamLog(50, "CHybridCam::Stop");
-	return CSource::Stop( );
+	//return CTransformFilter::Stop( );
+	return CBaseFilter::Stop( );
+
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::Pause( void)
 {
 	vcamLog(50, "CHybridCam::Pause");
-	return CSource::Pause( );
+	//return CTransformFilter::Pause( );
+
+	return CBaseFilter::Pause( );
+
+
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::Run(REFERENCE_TIME tStart)
 {
 	vcamLog(50, "CHybridCam::Run");
-	HRESULT hr = CSource::Run(tStart);
+	//HRESULT hr = CTransformFilter::Run(tStart);
+	HRESULT hr = CBaseFilter::Run( tStart);
 	vcamLog(50, "       CHybridCam::Run returning %d", (int) hr);
 	return hr;
 }
@@ -288,55 +307,163 @@ HRESULT STDMETHODCALLTYPE CHybridCam::Run(REFERENCE_TIME tStart)
 HRESULT STDMETHODCALLTYPE CHybridCam::GetState(DWORD dwMilliSecsTimeout,   __out  FILTER_STATE *State)
 {
 	vcamLog(50, "CHybridCam::GetState");
-	return CSource::GetState(dwMilliSecsTimeout,   State);
+	//return CTransformFilter::GetState(dwMilliSecsTimeout,   State);
+	return CBaseFilter::GetState(dwMilliSecsTimeout,   State);
 
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::SetSyncSource(__in_opt  IReferenceClock *pClock)
 {
 	vcamLog(50, "CHybridCam::SetSyncSource");
-	return CSource::SetSyncSource(pClock);
+	return CTransformFilter::SetSyncSource(pClock);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::GetSyncSource(__deref_out_opt  IReferenceClock **pClock)
 {
 	vcamLog(50, "CHybridCam::GetSyncSource");
-	return CSource::GetSyncSource(pClock);
+	return CTransformFilter::GetSyncSource(pClock);
 
 }
 
 STDMETHODIMP CHybridCam::GetClassID(__out CLSID *pClsID)
 {
 	vcamLog(50, "CHybridCam::GetClassID");
-	return CSource::GetClassID(pClsID);
+	return CTransformFilter::GetClassID(pClsID);
 }
 
 ULONG STDMETHODCALLTYPE CHybridCam::AddRef( void)
 {
 	//vcamLog(50, "CHybridCam::AddRef");
-	return CSource::AddRef( );
+	return CTransformFilter::AddRef( );
 }
 
 ULONG STDMETHODCALLTYPE CHybridCam::Release( void)
 {
 	//vcamLog(50, "CHybridCam::Release");
-	return CSource::Release( );
+	return CTransformFilter::Release( );
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::Register( void)
 {
 	vcamLog(50, "CHybridCam::Register");
-	return CSource::Register( );
+	return CTransformFilter::Register( );
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCam::Unregister( void)
 {
 	vcamLog(50, "CHybridCam::Unregister");
-	return CSource::Unregister( );
+	return CTransformFilter::Unregister( );
 }
 
+// Check the input type is OK - return an error otherwise
+HRESULT CHybridCam::CheckInputType(const CMediaType *mtIn)
+{
+    return NOERROR;
+ //   CheckPointer(mtIn,E_POINTER);
 
+ //   // check this is a VIDEOINFOHEADER type
+ //   if (!(*mtIn->FormatType() == FORMAT_VideoInfo || *mtIn->FormatType() == FORMAT_VideoInfo2)) {
+ //       return E_INVALIDARG;
+ //   }
 
+ //   // Can we transform this type
+ //   if (IsRgb24(mtIn)) {
+ //       return NOERROR;
+ //   }
+
+	////vcamLog(10, "MultiCamFilter::CheckInputType, returning E_FAIL");
+ //   return E_FAIL;
+}
+
+//
+// Checktransform
+//
+// Check a transform can be done between these formats
+//
+HRESULT CHybridCam::CheckTransform(const CMediaType *mtIn, const CMediaType *mtOut)
+{
+				return NOERROR;
+ //   CheckPointer(mtIn,E_POINTER);
+ //   CheckPointer(mtOut,E_POINTER);
+
+ //   if (IsRgb24(mtIn)) 
+ //   {
+ //       if (OnlySizesDiffer(mtIn, mtOut) )
+	//	{
+	//		if (MatchesOutputSize(mtOut) )
+	//		{
+	//			return NOERROR;
+	//		}
+	//	}
+	//}
+
+	////vcamLog(10, "MultiCamFilter::CheckTransform, returning E_FAIL; requested media types were as follows");
+	////vcamLog(10, "mtIn:");
+	////vcamLogFormat(12, mtIn);
+	////vcamLog(10, "mtOut:");
+	////vcamLogFormat(12, mtOut);
+	//
+ //   return E_FAIL;
+
+} // CheckTransform
+
+//
+// DecideBufferSize
+//
+// Tell the output pin's allocator what size buffers we
+// require.
+//
+HRESULT CHybridCam::DecideBufferSize(IMemAllocator *pAlloc,ALLOCATOR_PROPERTIES *pProperties)
+{
+	return m_pOutput->DecideBufferSize(pAlloc, pProperties);
+    //CheckPointer(pAlloc,E_POINTER);
+    //CheckPointer(pProperties,E_POINTER);
+    //HRESULT hr = NOERROR;
+
+    //pProperties->cBuffers = 1;
+    //pProperties->cbBuffer = m_pOutput->CurrentMediaType().GetSampleSize();
+    //VCAM_ASSERT(pProperties->cbBuffer);
+
+    //// Ask the allocator to reserve us some sample memory, NOTE the function
+    //// can succeed (that is return NOERROR) but still not have allocated the
+    //// memory that we requested, so we must check we got whatever we wanted
+
+    //ALLOCATOR_PROPERTIES Actual;
+    //hr = pAlloc->SetProperties(pProperties,&Actual);
+    //if (FAILED(hr)) {
+    //    return hr;
+    //}
+
+    //VCAM_ASSERT( Actual.cBuffers == 1 );
+
+    //if (pProperties->cBuffers > Actual.cBuffers ||
+    //        pProperties->cbBuffer > Actual.cbBuffer) {
+    //            return E_FAIL;
+    //}
+    //return NOERROR;
+
+} // DecideBufferSize
+
+//
+// GetMediaType
+//
+// I support one type, namely the type of the output pin
+HRESULT CHybridCam::GetMediaType(int iPosition, CMediaType *pMediaType)
+{
+    if (iPosition < 0) {
+        return E_INVALIDARG;
+    }
+
+    if (iPosition > 0) {
+        return VFW_S_NO_MORE_ITEMS;
+    }
+
+    CheckPointer(pMediaType,E_POINTER);
+    *pMediaType = m_pOutput->CurrentMediaType();
+
+    return NOERROR;
+
+} // GetMediaType
 
 
 
@@ -351,9 +478,11 @@ HRESULT STDMETHODCALLTYPE CHybridCam::Unregister( void)
 // all the stuff.
 //////////////////////////////////////////////////////////////////////////
 CHybridCamStream::CHybridCamStream(HRESULT *phr, CHybridCam *pParent, LPCWSTR pPinName) :
-    CSourceStream(NAME("HybridCam"),phr, pParent, pPinName), m_pParent(pParent)
+    //CSourceStream(NAME("HybridCam"),phr, pParent, pPinName), 
+		CTransformOutputPin(NAME("HybridCamStream"), (CTransformFilter *) pParent, phr, pPinName),
+		m_pParent(pParent)
 {
-	vcamOpenLog(10, "CHybridCamStream::~CHybridCamStream");
+	vcamOpenLog(10, "CHybridCamStream::CHybridCamStream");
 
 	//m_debugOut.exceptions(ios::failbit);
 	//m_debugOut.open(VCAM1PIN_DEBUG_FNAME, ios_base::out | ios_base::app );
@@ -392,7 +521,7 @@ HRESULT CHybridCamStream::QueryInterface(REFIID riid, void **ppv)
     else if(riid == _uuidof(IKsPropertySet))
         *ppv = (IKsPropertySet*)this;
 	else {
-		hr =  CSourceStream::QueryInterface(riid, ppv);
+		hr =  CTransformOutputPin::QueryInterface(riid, ppv);
 		vcamLog(50, "CHybridCamStream::QueryInterface, riid = %s", guidString);
 		if (hr==S_OK) {
 			vcamLog(50, "       S_OK");
@@ -468,7 +597,8 @@ HRESULT CHybridCamStream::SetMediaType(const CMediaType *pmt)
 {
 	vcamLog(50, "CHybridCamStream::SetMediaType");
     //DECLARE_PTR(VIDEOINFOHEADER, pvi, pmt->Format());
-    HRESULT hr = CSourceStream::SetMediaType(pmt);
+    //HRESULT hr = CTransformOutputPin::SetMediaType(pmt);
+    HRESULT hr = CBasePin::SetMediaType(pmt);
     return hr;
 }
 
@@ -737,7 +867,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryPinInfo(
 {
   vcamLog(50, "CHybridCamStream::QueryPinInfo");
   HRESULT hr = S_OK;
-  hr = CSourceStream::QueryPinInfo(pInfo);
+  hr = CTransformOutputPin::QueryPinInfo(pInfo);
 
   if(pInfo->dir==PINDIR_INPUT) {
 	  vcamLog(50, "   PINDIR_INPUT");
@@ -754,7 +884,8 @@ STDMETHODIMP  CHybridCamStream::NonDelegatingQueryInterface(REFIID riid, __deref
 {
 	vcamLog(50, "CHybridCamStream::NonDelegatingQueryInterface");
 	HRESULT hr = S_OK;
-	hr = CSourceStream::NonDelegatingQueryInterface(riid, ppv);
+	hr = CBasePin::NonDelegatingQueryInterface(riid, ppv);
+	//hr = CTransformOutputPin::NonDelegatingQueryInterface(riid, ppv);
 	
 	char guidString[GUID_STRING_MAXLEN];
 	Riid2String(riid, guidString);
@@ -803,7 +934,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::ConnectedTo(/* [annotation][out] */
 	__out  IPin **pPin)
 {
 	vcamLog(50, "CHybridCamStream::ConnectedTo");
-	HRESULT hr = CSourceStream::ConnectedTo(pPin);
+	HRESULT hr = CTransformOutputPin::ConnectedTo(pPin);
 	if (hr == S_OK) {
 		vcamLog(50, "   S_OK");
 	} else {
@@ -817,7 +948,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::EnumMediaTypes(
 	__out  IEnumMediaTypes **ppEnum)
 {
 	vcamLog(50, "CHybridCamStream::EnumMediaTypes");
-	HRESULT hr = CSourceStream::EnumMediaTypes(ppEnum);
+	HRESULT hr = CTransformOutputPin::EnumMediaTypes(ppEnum);
 	if (hr == S_OK) {
 		vcamLog(50, "   S_OK");
 	} else if (hr == VFW_E_NOT_CONNECTED) {
@@ -831,13 +962,13 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::EnumMediaTypes(
 LONG  CHybridCamStream::GetMediaTypeVersion()
 {
 	vcamLog(50, "CHybridCamStream::GetMediaTypeVersion");
-	return CSourceStream::GetMediaTypeVersion();
+	return CTransformOutputPin::GetMediaTypeVersion();
 }
 
 HRESULT  CHybridCamStream::CompleteConnect(IPin *pReceivePin)
 {
 	vcamLog(50, "CHybridCamStream::CompleteConnect");
-	HRESULT hr = CSourceStream::CompleteConnect(pReceivePin);
+	HRESULT hr = CTransformOutputPin::CompleteConnect(pReceivePin);
 	vcamLog(50, "     CompleteConnect returning %d", (int) hr);
 	return hr;
 }
@@ -845,7 +976,13 @@ HRESULT  CHybridCamStream::CompleteConnect(IPin *pReceivePin)
 HRESULT  CHybridCamStream::CheckConnect(IPin *pPin)
 {
 	vcamLog(50, "CHybridCamStream::CheckConnect");
-	HRESULT hr = CSourceStream::CheckConnect(pPin);
+	HRESULT hr = m_pTransformFilter->CheckConnect(PINDIR_OUTPUT,pPin);
+    if (FAILED(hr)) {
+		vcamLog(50, "     CheckConnect returning %d", (int) hr);
+	    return hr;
+    }
+    hr = CBaseOutputPin::CheckConnect(pPin);
+	//HRESULT hr = CTransformOutputPin::CheckConnect(pPin);
 	vcamLog(50, "     CheckConnect returning %d", (int) hr);
 	return hr;
 }
@@ -853,7 +990,7 @@ HRESULT  CHybridCamStream::CheckConnect(IPin *pPin)
 HRESULT  CHybridCamStream::BreakConnect()
 {
 	vcamLog(50, "CHybridCamStream::BreakConnect");
-	HRESULT hr = CSourceStream::BreakConnect();
+	HRESULT hr = CTransformOutputPin::BreakConnect();
 	vcamLog(50, "     BreakConnect returning %d", (int) hr);
 	return hr;
 }
@@ -866,7 +1003,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::Connect(
 	HRESULT hr = S_OK;
 	vcamLog(50, "!!!!!!!!!!!!!!!CHybridCamStream::Connect");
 
-	hr = CSourceStream::Connect( pReceivePin, pmt);
+	hr = CTransformOutputPin::Connect( pReceivePin, pmt);
 
 	//vcamLog(50, "         CHybridCamStream::Connect returning %d", (int) hr);
 	if(hr==S_OK) {
@@ -895,13 +1032,13 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::ReceiveConnection(
 	/* [in] */ const AM_MEDIA_TYPE *pmt)
 {
 	vcamLog(50, "CHybridCamStream::ReceiveConnection");
-	return CSourceStream::ReceiveConnection( pConnector,pmt);
+	return CTransformOutputPin::ReceiveConnection( pConnector,pmt);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::Disconnect( void)
 {
 	vcamLog(50, "CHybridCamStream::Disconnect");
-	return CSourceStream::Disconnect( );
+	return CTransformOutputPin::Disconnect( );
 }
 
 
@@ -910,7 +1047,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::ConnectionMediaType(
 	__out  AM_MEDIA_TYPE *pmt)
 {
 	vcamLog(50, "CHybridCamStream::ConnectionMediaType");
-	return CSourceStream::ConnectionMediaType(pmt);
+	return CTransformOutputPin::ConnectionMediaType(pmt);
 }
 
 
@@ -919,7 +1056,7 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryDirection(
 	__out  PIN_DIRECTION *pPinDir)
 {
 	vcamLog(50, "CHybridCamStream::QueryDirection");
-	return CSourceStream::QueryDirection(pPinDir);
+	return CTransformOutputPin::QueryDirection(pPinDir);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryId( 
@@ -927,14 +1064,14 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryId(
 	__out  LPWSTR *Id)
 {
 	vcamLog(50, "CHybridCamStream::QueryId");
-	return CSourceStream::QueryId(Id);
+	return CTransformOutputPin::QueryId(Id);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryAccept( 
 	/* [in] */ const AM_MEDIA_TYPE *pmt)
 {
 	vcamLog(50, "CHybridCamStream::QueryAccept");
-	return CSourceStream::QueryAccept(pmt);
+	return CTransformOutputPin::QueryAccept(pmt);
 }
 
 
@@ -944,25 +1081,25 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::QueryInternalConnections(
 	/* [out][in] */ ULONG *nPin)
 {
 	vcamLog(50, "CHybridCamStream::QueryInternalConnections");
-	return CSourceStream::QueryInternalConnections(apPin,nPin);
+	return CTransformOutputPin::QueryInternalConnections(apPin,nPin);
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::EndOfStream( void)
 {
 	vcamLog(50, "CHybridCamStream::EndOfStream");
-	return CSourceStream::EndOfStream( );
+	return CTransformOutputPin::EndOfStream( );
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::BeginFlush( void)
 {
 	vcamLog(50, "CHybridCamStream::BeginFlush");
-	return CSourceStream::BeginFlush( );
+	return CTransformOutputPin::BeginFlush( );
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::EndFlush( void)
 {
 	vcamLog(50, "CHybridCamStream::EndFlush");
-	return CSourceStream::EndFlush( );
+	return CTransformOutputPin::EndFlush( );
 }
 
 HRESULT STDMETHODCALLTYPE CHybridCamStream::NewSegment( 
@@ -971,13 +1108,73 @@ HRESULT STDMETHODCALLTYPE CHybridCamStream::NewSegment(
 	/* [in] */ double dRate)
 {
 	vcamLog(50, "CHybridCamStream::NewSegment");
-	return CSourceStream::NewSegment(tStart,tStop, dRate);
+	return CTransformOutputPin::NewSegment(tStart,tStop, dRate);
 }
 
 HRESULT CHybridCamStream::Active(void)  {
 	vcamLog(50, "CHybridCamStream::Active");
 
-	HRESULT hr = CSourceStream::Active();
+	HRESULT hr = CTransformOutputPin::Active();
 	vcamLog(50, "         CHybridCamStream::Active returning %d", (int) hr);
 	return hr;
 }
+
+//STDMETHODIMP CHybridCamStream::QueryInterface(REFIID riid, __deref_out void **ppv) 
+//{      
+//	HRESULT hr = S_OK;
+//
+//	char guidString[GUID_STRING_MAXLEN];
+//	Riid2String(riid, guidString);
+//
+//	hr = GetOwner()->QueryInterface(riid,ppv);
+//
+//	vcamLog(10, "MultiCamOutputPin::QueryInterface, riid = %s", guidString);
+//	if (hr==S_OK) {
+//		vcamLog(10, "       MultiCamOutputPin::QueryInterface returning S_OK");
+//	}
+//	else if (hr==E_NOINTERFACE ) {
+//		vcamLog(10, "       MultiCamOutputPin::QueryInterface returning E_NOINTERFACE ");
+//	}
+//	else if (hr==E_POINTER) {
+//		vcamLog(10, "       MultiCamOutputPin::QueryInterface returning E_POINTER");
+//	} else {
+//		vcamLog(10, "       MultiCamOutputPin::QueryInterface returning 0x%x", hr);
+//	}
+//
+//	return hr;            
+//};
+//
+//STDMETHODIMP CHybridCamStream::NonDelegatingQueryInterface(REFIID riid, void **ppv)
+//{
+//	HRESULT hr = S_OK;
+//	CheckPointer(ppv,E_POINTER);
+//
+//	if (riid == IID_IKsPropertySet) {
+//        hr = GetInterface((IKsPropertySet *) this, ppv);
+//		goto done;
+//    } else if (riid == IID_IAMStreamConfig) {
+//        hr =  GetInterface((IAMStreamConfig *) this, ppv);
+//		goto done;
+//    } else {
+//        hr =  CTransformOutputPin::NonDelegatingQueryInterface(riid, ppv);
+//		goto done;
+//    }
+//
+//done:
+//	char guidString[GUID_STRING_MAXLEN];
+//	Riid2String(riid, guidString);
+//	vcamLog(10, "MultiCamOutputPin::NonDelegatingQueryInterface, riid = %s", guidString);
+//	if (hr==NOERROR) {
+//		vcamLog(10, "       MultiCamOutputPin::NonDelegatingQueryInterface returning NOERROR");
+//	}
+//	else if (hr==E_NOINTERFACE ) {
+//		vcamLog(10, "       MultiCamOutputPin::NonDelegatingQueryInterface returning E_NOINTERFACE ");
+//	}
+//	else if (hr==E_POINTER) {
+//		vcamLog(10, "       MultiCamOutputPin::NonDelegatingQueryInterface returning E_POINTER");
+//	} else {
+//		vcamLog(10, "       MultiCamOutputPin::NonDelegatingQueryInterface returning 0x%x", hr);
+//	}
+//
+//	return hr;
+//} // NonDelegatingQueryInterface

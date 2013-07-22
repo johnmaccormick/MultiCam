@@ -13,7 +13,7 @@ using namespace std;
 EXTERN_C const GUID CLSID_HybridCam;
 
 class CHybridCamStream;
-class CHybridCam : public CSource
+class CHybridCam : public CTransformFilter //CSource
 {
 public:
     //////////////////////////////////////////////////////////////////////////
@@ -88,12 +88,20 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE Register( void);
     virtual HRESULT STDMETHODCALLTYPE Unregister( void);
 
-
-
+// begin jmac
+public:
+    // Overrriden from CTransformFilter base class
+    HRESULT CheckInputType(const CMediaType *mtIn);
+    HRESULT CheckTransform(const CMediaType *mtIn, const CMediaType *mtOut);
+    HRESULT DecideBufferSize(IMemAllocator *pAlloc,
+                             ALLOCATOR_PROPERTIES *pProperties);
+    HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
+//    HRESULT Transform(IMediaSample *pIn, IMediaSample *pOut);
 
 };
 
-class CHybridCamStream : public CSourceStream, public IAMStreamConfig, public IKsPropertySet
+class CHybridCamStream : public CTransformOutputPin, //public CSourceStream, 
+	public IAMStreamConfig, public IKsPropertySet
 {
 public:
 
@@ -217,6 +225,7 @@ private:
     HBITMAP m_hLogoBmp;
     CCritSec m_cSharedState;
     IReferenceClock *m_pClock;
+
 
 };
 
