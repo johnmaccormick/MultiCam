@@ -88,7 +88,6 @@ CVCam::CVCam(LPUNKNOWN lpunk, HRESULT *phr) :
     m_paStreams = (CSourceStream **) new CVCamStream*[1];
     m_paStreams[0] = new CVCamStream(phr, this, L"Virtual Cam");
 
-
 }
 
 CVCam::~CVCam()
@@ -353,7 +352,7 @@ HRESULT STDMETHODCALLTYPE CVCam::Unregister( void)
 CVCamStream::CVCamStream(HRESULT *phr, CVCam *pParent, LPCWSTR pPinName) :
     CSourceStream(NAME("Virtual Cam"),phr, pParent, pPinName), m_pParent(pParent)
 {
-	vcamOpenLog(10, "CVCamStream::~CVCamStream");
+	vcamOpenLog(10, "CVCamStream::CVCamStream");
 
 	//m_debugOut.exceptions(ios::failbit);
 	//m_debugOut.open(VCAM1PIN_DEBUG_FNAME, ios_base::out | ios_base::app );
@@ -864,7 +863,7 @@ HRESULT STDMETHODCALLTYPE CVCamStream::Connect(
 	__in_opt  const AM_MEDIA_TYPE *pmt)
 {
 	HRESULT hr = S_OK;
-	vcamLog(50, "!!!!!!!!!!!!!!!CVCamStream::Connect");
+	vcamLog(50, "CVCamStream::Connect");
 
 	hr = CSourceStream::Connect( pReceivePin, pmt);
 
