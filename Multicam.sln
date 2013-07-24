@@ -32,6 +32,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MulticamExe", "MulticamExe\MulticamExe.csproj", "{E90CF392-B791-4EC0-9BAF-17A700630BC3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HybridCam", "HybridCam\HybridCam.vcxproj", "{05CD8680-D285-4D27-8D81-2E036393F4AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BBBCF411-5771-4AE1-9F7C-8C73BCB0F38E} = {BBBCF411-5771-4AE1-9F7C-8C73BCB0F38E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpstreamCam", "UpstreamCam\UpstreamCam.vcxproj", "{47CF8DD6-148D-4D01-8752-BC525D58BB4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BBBCF411-5771-4AE1-9F7C-8C73BCB0F38E} = {BBBCF411-5771-4AE1-9F7C-8C73BCB0F38E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -211,6 +219,20 @@ Global
 		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|Win32.Build.0 = Release|Win32
 		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|x64.ActiveCfg = Release|Win32
 		{05CD8680-D285-4D27-8D81-2E036393F4AC}.Release|x86.ActiveCfg = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|Win32.Build.0 = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|x64.ActiveCfg = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Debug|x86.ActiveCfg = Debug|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|Any CPU.ActiveCfg = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|Win32.ActiveCfg = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|Win32.Build.0 = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|x64.ActiveCfg = Release|Win32
+		{47CF8DD6-148D-4D01-8752-BC525D58BB4C}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
