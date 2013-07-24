@@ -142,6 +142,7 @@ MultiCamFilter::MultiCamFilter(TCHAR *tszName,
 	//for(int i=0; i<m_iNumUpstreamFilters; i++){
 	//	m_ppOverlays[i] = NULL;
 	//}
+	vcamLog(10, "MultiCamFilter::MultiCamFilter: constructor complete");
 } // (Constructor)
 
 
@@ -1432,7 +1433,7 @@ HRESULT MultiCamFilter::GetCapabilityFormat(IAMStreamConfig *pConfig, int index,
 
 HRESULT MultiCamFilter::ConnectUpstream() 
 {
-	//vcamLog(10, "MultiCamFilter::ConnectUpstream");
+	vcamLog(10, "MultiCamFilter::ConnectUpstream");
 	VCAM_ASSERT (m_pGraph!=NULL);
 	HRESULT hr = S_OK;
 	IGraphBuilder *pGraphBuilder = NULL;
@@ -1476,7 +1477,7 @@ HRESULT MultiCamFilter::ConnectUpstream()
 done:
 	SafeRelease(&pGraphBuilder);
 
-	//vcamLog(10, "       MultiCamFilter::ConnectUpstream returning 0x%x",  hr);
+	vcamLog(10, "       MultiCamFilter::ConnectUpstream returning 0x%x",  hr);
 	return hr;
 }
 
@@ -1508,6 +1509,7 @@ STDMETHODIMP MultiCamFilter::QueryInterface(REFIID riid, __deref_out void **ppv)
 
 HRESULT MultiCamFilter::InitializeInputPins()
 {
+	vcamLog(50, "MultiCamFilter::InitializeInputPins");
 	HRESULT hr = S_OK;
 	VCAM_ASSERT(m_ppInputs==NULL);
 	m_ppInputs = new COverlayInputPin*[MULTICAM_NUM_INPUT_PINS];
@@ -1529,7 +1531,9 @@ HRESULT MultiCamFilter::InitializeInputPins()
 
 HRESULT MultiCamFilter::InitializeOutputPin()
 {
+	vcamLog(50, "MultiCamFilter::InitializeOutputPin");
 	HRESULT hr = S_OK;
+	VCAM_ASSERT(m_pOutput==NULL);
 	m_pOutput = new MultiCamOutputPin( NAME("MultiCam output pin")
 		, this       // Owner filter
 		, &hr        // Result code
@@ -1541,13 +1545,16 @@ HRESULT MultiCamFilter::InitializeOutputPin()
 CBasePin* MultiCamFilter::GetPin(int n)
 {
     HRESULT hr = S_OK;
+	CBasePin* retVal = NULL;
+	vcamLog(50, "MultiCamFilter::GetPin, n = %d", n);
 
     // Create the input pins if necessary
     if (m_pInput == NULL) {
         hr = InitializeInputPins();
         hrOKnoRet;
         if (m_pInput == NULL) {
-            return NULL;
+            retVal = NULL;
+			goto done;
         }
 		hr = InitializeOutputPin();        
 		hrOKnoRet;
@@ -1555,13 +1562,22 @@ CBasePin* MultiCamFilter::GetPin(int n)
 
     // Return the appropriate pin
 	if (n >= 0 && n < MULTICAM_NUM_INPUT_PINS) {
-        return m_ppInputs[n];
-    } else
-    if (n == MULTICAM_NUM_INPUT_PINS) {
-        return m_pOutput;
+        retVal =  m_ppInputs[n];
+    } else if (n == MULTICAM_NUM_INPUT_PINS) {
+        retVal =   m_pOutput;
     } else {
-        return NULL;
+        retVal =   NULL;
     }
+done:
+	if (retVal == NULL) {
+		vcamLog(50, "  MultiCamFilter::GetPin: returning NULL");
+	} else if(retVal->IsConnected()) {
+		vcamLog(50, "  MultiCamFilter::GetPin: returning; pin is connected");
+	} else {
+		vcamLog(50, "  MultiCamFilter::GetPin: returning; pin is not connected");
+	}
+
+	return retVal;
 }
 
 HRESULT MultiCamFilter::Overlay(int inID, IMediaSample *pOut, /*inout*/ int &xStart)

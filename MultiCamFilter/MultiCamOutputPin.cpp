@@ -44,6 +44,8 @@ MultiCamOutputPin::MultiCamOutputPin(
 	m_mt.InitMediaType();
 
 	hrOK;
+
+	vcamLog(10, "MultiCamOutputPin::MultiCamOutputPin: constructor complete");
 }
 
 

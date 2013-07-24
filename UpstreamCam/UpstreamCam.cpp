@@ -87,6 +87,7 @@ CUpstreamCam::CUpstreamCam(LPUNKNOWN lpunk, HRESULT *phr) :
     // Create the one and only output pin
     m_paStreams = (CSourceStream **) new CUpstreamCamStream*[1];
     m_paStreams[0] = new CUpstreamCamStream(phr, this, L"UpstreamCam");
+	vcamLog(10, "CUpstreamCam::CUpstreamCam: constructor complete");
 
 }
 
@@ -368,6 +369,7 @@ CUpstreamCamStream::CUpstreamCamStream(HRESULT *phr, CUpstreamCam *pParent, LPCW
 	//	msg.append("in CUpstreamCamStream::CUpstreamCamStream, cbasefilter::m_pgraph!=null");
 	//}
 	//Msg((TCHAR*) msg.c_str());
+	vcamLog(10, "CUpstreamCamStream::CUpstreamCamStream: constructor complete");
 	
 }
 
@@ -434,9 +436,10 @@ HRESULT CUpstreamCamStream::FillBuffer(IMediaSample *pms)
     long lDataLen;
     pms->GetPointer(&pData);
     lDataLen = pms->GetSize();
-    for(int i = 0; i < lDataLen; ++i)
-        pData[i] = rand();
-
+    for(int i = 0; i < lDataLen; ++i) {
+		BYTE b = rand();
+        pData[i] = b/2;
+	}
 
 	//string msg("");
 	//if (this->m_pParent->GetGraph()==NULL) {
