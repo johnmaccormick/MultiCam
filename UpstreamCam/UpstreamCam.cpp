@@ -359,8 +359,8 @@ CUpstreamCamStream::CUpstreamCamStream(HRESULT *phr, CUpstreamCam *pParent, LPCW
 	//m_debugOut.open(VCAM1PIN_DEBUG_FNAME, ios_base::out | ios_base::app );
 	vcamLog(10, "***********************CUpstreamCamStream::CUpstreamCamStream***********************");
 
-    // Set the default media type as 320x240x24@15
-    GetMediaType(4, &m_mt);
+    // Set the default media type as 640x480x24@15
+    GetMediaType(8, &m_mt);
 
  //   string msg("");
 	//if (this->m_pParent->GetGraph()==NULL) {
@@ -612,7 +612,7 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::GetFormat(AM_MEDIA_TYPE **ppmt)
 
 HRESULT STDMETHODCALLTYPE CUpstreamCamStream::GetNumberOfCapabilities(int *piCount, int *piSize)
 {
-	*piCount = 8;
+	*piCount = 9;
     *piSize = sizeof(VIDEO_STREAM_CONFIG_CAPS);
 
 	vcamLog(50, "CUpstreamCamStream::GetNumberOfCapabilities, Count = %d, Size = %d", *piCount, *piSize);
@@ -626,7 +626,7 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::GetStreamCaps(int iIndex, AM_MEDIA
     *pmt = CreateMediaType(&m_mt);
     DECLARE_PTR(VIDEOINFOHEADER, pvi, (*pmt)->pbFormat);
 
-    if (iIndex == 0) iIndex = 4;
+    if (iIndex == 0) iIndex = 8;
 
     pvi->bmiHeader.biCompression = BI_RGB;
     pvi->bmiHeader.biBitCount    = 24;

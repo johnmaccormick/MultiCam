@@ -88,8 +88,8 @@ string UNACCEPTABLE_CAMERA_NAMES[] = {
 	//, "Microsoft LifeCam HD-3000"
 };
 
-const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 240;//480;
-const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 480;//768;
+const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 480;
+const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 768;
 
 // from http://msdn.microsoft.com/en-us/library/dd940435(v=VS.85).aspx
 template <class T> void SafeRelease(T **ppT)
@@ -1283,13 +1283,16 @@ HRESULT MultiCamFilter::SetUpstreamFormats()
 	return S_OK;
 }
 
+
 HRESULT MultiCamFilter::ChooseBestHeight(IAMStreamConfig *pConfig, 
-	int filterIndex, int count,	int size,
+	int filterIndex, int capCount,	int capSize,
 	BOOL requireRGB24,
 	/*out*/ int *bestIndex, /*out*/ LONG *bestHeight)
 {
 	HRESULT hr = S_OK;
 
+	*bestIndex = -1;
+	*bestHeight = -1;
 	LONG width = -1;
 	LONG height = -1;
 	LONG best_height_under_threshold = -1;
@@ -1298,9 +1301,9 @@ HRESULT MultiCamFilter::ChooseBestHeight(IAMStreamConfig *pConfig,
 	int index_of_smallest = -1;
 
 	vcamLog(10, "MultiCamFilter::ChooseBestHeight: %s: %d caps (size %d)", 
-		m_cameraFriendlyNames[filterIndex].c_str(), count, size);
-	for(int i=0; i<count; i++){
-		hr = GetCapabilityImageSize(pConfig, i, size, requireRGB24, /*out*/ &width, /*out*/ &height);
+		m_cameraFriendlyNames[filterIndex].c_str(), capCount, capSize);
+	for(int i=0; i<capCount; i++){
+		hr = GetCapabilityImageSize(pConfig, i, capSize, requireRGB24, /*out*/ &width, /*out*/ &height);
 		hrOK;
 		vcamLog(90, "MultiCamFilter::ChooseBestHeight: i=%d, RGB24=%d, width=%ld, height=%ld", 
 			i, requireRGB24, width, height);
@@ -1322,6 +1325,10 @@ HRESULT MultiCamFilter::ChooseBestHeight(IAMStreamConfig *pConfig,
 	else if (index_of_smallest != -1 && smallest_height <= s_MAX_CAMERA_HEIGHT) {
 		*bestIndex = index_of_smallest;
 		*bestHeight = smallest_height;
+	}
+	else {
+		// do nothing -- bestIndex and bestHeight remain at -1,
+		// and the calling function should decide what to do about this
 	}
 	return hr;		
 }
