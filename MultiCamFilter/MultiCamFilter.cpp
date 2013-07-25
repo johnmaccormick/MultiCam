@@ -88,8 +88,8 @@ string UNACCEPTABLE_CAMERA_NAMES[] = {
 	//, "Microsoft LifeCam HD-3000"
 };
 
-const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 480;
-const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 768;
+const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 240;//480;
+const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 480;//768;
 
 // from http://msdn.microsoft.com/en-us/library/dd940435(v=VS.85).aspx
 template <class T> void SafeRelease(T **ppT)
@@ -1494,13 +1494,23 @@ done:
 
 STDMETHODIMP MultiCamFilter::QueryInterface(REFIID riid, __deref_out void **ppv) 
 {      
-	HRESULT hr = S_OK;
-
-	hr = GetOwner()->QueryInterface(riid,ppv);
-
 	char guidString[GUID_STRING_MAXLEN];
 	Riid2String(riid, guidString);
 	vcamLog(10, "MultiCamFilter::QueryInterface, riid = %s", guidString);
+
+	HRESULT hr = S_OK;
+
+	//Forward request for IAMStreamConfig & IKsPropertySet to the pin
+	if(riid == _uuidof(IAMStreamConfig) || riid == _uuidof(IKsPropertySet))
+	{
+		vcamLog(50, "MultiCamFilter::QueryInterface forwarding to pin");
+		hr = m_pOutput->QueryInterface(riid, ppv);
+	} else {
+		// or should this be CTransformFilter::QueryInterface() ?? -- That would be more closely analogous to
+		// the vcam code
+		hr = GetOwner()->QueryInterface(riid,ppv);
+	}
+
 	if (hr==S_OK) {
 		vcamLog(10, "       MultiCamFilter::QueryInterface returning S_OK");
 	}

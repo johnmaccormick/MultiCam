@@ -679,7 +679,10 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::GetStreamCaps(int iIndex, AM_MEDIA
     pvscc->MinBitsPerSecond = (80 * 60 * 3 * 8) / 5;
     pvscc->MaxBitsPerSecond = 640 * 480 * 3 * 8 * 50;
 
-	vcamLog(50, "        S_OK");
+	vcamLog(10, "CUpstreamCamStream::GetStreamCaps, **ppmt = ...");
+	vcamLogFormat(12, *pmt);
+
+	vcamLog(50, "     CUpstreamCamStream::GetStreamCaps: returning S_OK");
     return S_OK;
 }
 
