@@ -43,7 +43,8 @@ MultiCamOutputPin::MultiCamOutputPin(
 
 	m_mt.InitMediaType();
 
-	hrOK;
+	// The following does not work. Causes crashes in MultiCamFilter::JoinTemporaryGraph()
+	//hr = InitializeMediaType();	hrOK;
 
 	vcamLog(10, "MultiCamOutputPin::MultiCamOutputPin: constructor complete");
 }
@@ -465,8 +466,103 @@ HRESULT MultiCamOutputPin::AttemptConnection(
 	
 	HRESULT hr = S_OK;
 
-	hr = CBasePin::AttemptConnection(pReceivePin, pmt);
+	hr = CTransformOutputPin::AttemptConnection(pReceivePin, pmt);
 
 	vcamLog(10, "    MultiCamOutputPin::AttemptConnection, returning 0x%x", hr);
     return hr;		
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryPinInfo( __out  PIN_INFO *pInfo) {
+	vcamLog(50, "MultiCamOutputPin::QueryPinInfo");
+	return CTransformOutputPin::QueryPinInfo(pInfo);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::ReceiveConnection( 
+		/* [in] */ IPin *pConnector,
+		/* [in] */ const AM_MEDIA_TYPE *pmt) {
+	vcamLog(50, "MultiCamOutputPin::ReceiveConnection");
+	return CTransformOutputPin::ReceiveConnection(pConnector, pmt);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::Disconnect( void) {
+	vcamLog(50, "MultiCamOutputPin::Disconnect");
+	return CTransformOutputPin::Disconnect();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::ConnectedTo( 
+		/* [annotation][out] */ 
+		__out  IPin **pPin) {
+	vcamLog(50, "MultiCamOutputPin::ConnectedTo");
+	HRESULT hr = CTransformOutputPin::ConnectedTo(pPin);
+	if (hr == S_OK) {
+		vcamLog(50, "   S_OK");
+	} else {
+		vcamLog(50, "   not S_OK");
+	}
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::ConnectionMediaType( 
+		/* [annotation][out] */ 
+		__out  AM_MEDIA_TYPE *pmt) {
+	vcamLog(50, "MultiCamOutputPin::ConnectionMediaType");
+	return CTransformOutputPin::ConnectionMediaType(pmt);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryDirection( 
+		/* [annotation][out] */ 
+		__out  PIN_DIRECTION *pPinDir) {
+	vcamLog(50, "MultiCamOutputPin::QueryDirection");
+	return CTransformOutputPin::QueryDirection(pPinDir);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryId( 
+		/* [annotation][out] */ 
+		__out  LPWSTR *Id) {
+	vcamLog(50, "MultiCamOutputPin::QueryId");
+	return CTransformOutputPin::QueryId(Id);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryAccept( 
+		/* [in] */ const AM_MEDIA_TYPE *pmt) {
+	vcamLog(50, "MultiCamOutputPin::QueryAccept");
+	return CTransformOutputPin::QueryAccept(pmt);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::EnumMediaTypes( 
+		/* [annotation][out] */ 
+		__out  IEnumMediaTypes **ppEnum) {
+	vcamLog(50, "MultiCamOutputPin::EnumMediaTypes");
+	return CTransformOutputPin::EnumMediaTypes(ppEnum);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryInternalConnections( 
+		/* [annotation][out] */ 
+		__out_ecount_part_opt(*nPin, *nPin)  IPin **apPin,
+		/* [out][in] */ ULONG *nPin) {
+	vcamLog(50, "MultiCamOutputPin::QueryInternalConnections");
+	return CTransformOutputPin::QueryInternalConnections(apPin, nPin);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::EndOfStream( void) {
+	vcamLog(50, "MultiCamOutputPin::EndOfStream");
+	return CTransformOutputPin::EndOfStream();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::BeginFlush( void) {
+	vcamLog(50, "MultiCamOutputPin::BeginFlush");
+	return CTransformOutputPin::BeginFlush();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::EndFlush( void) {
+	vcamLog(50, "MultiCamOutputPin::EndFlush");
+	return CTransformOutputPin::EndFlush();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamOutputPin::NewSegment( 
+		/* [in] */ REFERENCE_TIME tStart,
+		/* [in] */ REFERENCE_TIME tStop,
+		/* [in] */ double dRate) {
+	vcamLog(50, "MultiCamOutputPin::NewSegment");
+	return CTransformOutputPin::NewSegment(tStart, tStop, dRate);
 }

@@ -56,6 +56,58 @@ public:
 	HRESULT STDMETHODCALLTYPE GetNumberOfCapabilities(int *piCount, int *piSize);
 	HRESULT STDMETHODCALLTYPE GetStreamCaps(int iIndex, AM_MEDIA_TYPE **pmt, BYTE *pSCC);
 
+    //////////////////////////////////////////////////////////////////////////
+    //  IPin
+    //////////////////////////////////////////////////////////////////////////
+	virtual HRESULT STDMETHODCALLTYPE QueryPinInfo( 
+		/* [annotation][out] */ 
+		__out  PIN_INFO *pInfo);
+
+	virtual HRESULT STDMETHODCALLTYPE ReceiveConnection( 
+		/* [in] */ IPin *pConnector,
+		/* [in] */ const AM_MEDIA_TYPE *pmt);
+
+	virtual HRESULT STDMETHODCALLTYPE Disconnect( void);
+
+	virtual HRESULT STDMETHODCALLTYPE ConnectedTo( 
+		/* [annotation][out] */ 
+		__out  IPin **pPin);
+
+	virtual HRESULT STDMETHODCALLTYPE ConnectionMediaType( 
+		/* [annotation][out] */ 
+		__out  AM_MEDIA_TYPE *pmt);
+
+	virtual HRESULT STDMETHODCALLTYPE QueryDirection( 
+		/* [annotation][out] */ 
+		__out  PIN_DIRECTION *pPinDir);
+
+	virtual HRESULT STDMETHODCALLTYPE QueryId( 
+		/* [annotation][out] */ 
+		__out  LPWSTR *Id);
+
+	virtual HRESULT STDMETHODCALLTYPE QueryAccept( 
+		/* [in] */ const AM_MEDIA_TYPE *pmt);
+
+	virtual HRESULT STDMETHODCALLTYPE EnumMediaTypes( 
+		/* [annotation][out] */ 
+		__out  IEnumMediaTypes **ppEnum);
+
+	virtual HRESULT STDMETHODCALLTYPE QueryInternalConnections( 
+		/* [annotation][out] */ 
+		__out_ecount_part_opt(*nPin, *nPin)  IPin **apPin,
+		/* [out][in] */ ULONG *nPin);
+
+	virtual HRESULT STDMETHODCALLTYPE EndOfStream( void);
+
+	virtual HRESULT STDMETHODCALLTYPE BeginFlush( void);
+
+	virtual HRESULT STDMETHODCALLTYPE EndFlush( void);
+
+	virtual HRESULT STDMETHODCALLTYPE NewSegment( 
+		/* [in] */ REFERENCE_TIME tStart,
+		/* [in] */ REFERENCE_TIME tStop,
+		/* [in] */ double dRate);
+
 protected:
 	MultiCamFilter *m_pParent;
 

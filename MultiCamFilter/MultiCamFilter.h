@@ -52,6 +52,32 @@ public:
 
 	STDMETHODIMP GetClassID(CLSID *pClsid);
 
+	// A bunch of methods that are used in vcam, so implement them here but pass straight through to CBaseFilter, or whatever is appropriate
+	virtual int GetPinCount();
+	virtual HRESULT StreamTime(CRefTime& rtStream);
+	virtual LONG GetPinVersion();
+	virtual __out_opt LPAMOVIESETUP_FILTER GetSetupData();
+	virtual HRESULT STDMETHODCALLTYPE EnumPins(__out  IEnumPins **ppEnum);
+	virtual HRESULT STDMETHODCALLTYPE FindPin(LPCWSTR Id, __out  IPin **ppPin);
+	virtual HRESULT STDMETHODCALLTYPE QueryFilterInfo(__out  FILTER_INFO *pInfo);
+	virtual HRESULT STDMETHODCALLTYPE QueryVendorInfo(__out  LPWSTR *pVendorInfo);
+	virtual HRESULT STDMETHODCALLTYPE Stop( void);
+	virtual HRESULT STDMETHODCALLTYPE Pause( void);
+	virtual HRESULT STDMETHODCALLTYPE Run( 
+		REFERENCE_TIME tStart);
+	virtual HRESULT STDMETHODCALLTYPE GetState( 
+		/* [in] */ DWORD dwMilliSecsTimeout,
+		/* [annotation][out] */ 
+		__out  FILTER_STATE *State);
+	virtual HRESULT STDMETHODCALLTYPE SetSyncSource( 
+		/* [annotation][in] */ 
+		__in_opt  IReferenceClock *pClock);
+	virtual HRESULT STDMETHODCALLTYPE GetSyncSource( 
+		/* [annotation][out] */ 
+		__deref_out_opt  IReferenceClock **pClock);
+	virtual HRESULT STDMETHODCALLTYPE Register( void);
+    virtual HRESULT STDMETHODCALLTYPE Unregister( void);
+
 protected:
 
     // Constructor
@@ -70,13 +96,11 @@ private:
 public:
 	virtual ~MultiCamFilter();
 	STDMETHODIMP JoinFilterGraph(__inout_opt IFilterGraph * pGraph, __in_opt LPCWSTR pName);
-	virtual int GetPinCount();
 	virtual HRESULT Receive(IMediaSample *pSample, int ID);
 
 	static LRESULT CALLBACK JmacKeyboardProc2(int code, WPARAM wParam, LPARAM lParam);
 
 	double getAverageFrameRate();
-
 
 
 protected:

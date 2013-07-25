@@ -142,6 +142,10 @@ MultiCamFilter::MultiCamFilter(TCHAR *tszName,
 	//for(int i=0; i<m_iNumUpstreamFilters; i++){
 	//	m_ppOverlays[i] = NULL;
 	//}
+
+
+	
+
 	vcamLog(10, "MultiCamFilter::MultiCamFilter: constructor complete");
 } // (Constructor)
 
@@ -154,6 +158,9 @@ HRESULT MultiCamFilter::StartUp(BOOL inConstructor)
 	hr = InitializeUpstreamInterfaces(); 	hrOKnoRet;
 	hr = LogCapabilities();					hrOKnoRet;
 	hr = SetUpstreamFormats();				hrOKnoRet;
+
+	// This wasn't here before. Why not?
+	hr = InitializeOutputPin();				hrOKnoRet;
 
 	VCAM_ASSERT(m_iNumUpstreamFilters >= 0 && m_iNumUpstreamFilters <= MULTICAM_NUM_INPUT_PINS);
 	VCAM_ASSERT(m_iNumValidFilters >= 0 && m_iNumValidFilters <= MULTICAM_NUM_INPUT_PINS);
@@ -839,17 +846,21 @@ HRESULT MultiCamFilter::DecideBufferSize(IMemAllocator *pAlloc,ALLOCATOR_PROPERT
 // I support one type, namely the type of the output pin
 HRESULT MultiCamFilter::GetMediaType(int iPosition, CMediaType *pMediaType)
 {
+	vcamLog(50, "MultiCamFilter::GetMediaType, iPosition = %d", iPosition);
     if (iPosition < 0) {
+		vcamLog(50, "    GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
         return E_INVALIDARG;
     }
 
     if (iPosition > 0) {
+		vcamLog(50, "    GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
         return VFW_S_NO_MORE_ITEMS;
     }
 
     CheckPointer(pMediaType,E_POINTER);
     *pMediaType = m_pOutput->CurrentMediaType();
 
+	vcamLog(50, "    GetMediaType returning S_OK (0x%x)", S_OK);
     return NOERROR;
 
 } // GetMediaType
@@ -1539,6 +1550,12 @@ HRESULT MultiCamFilter::InitializeOutputPin()
 		, &hr        // Result code
 		, L"MultiCamOutput"  // Pin name
 		);
+	hrOK;
+	
+	// Set a provisional media type in the output pin
+	// TODO
+	///////////////
+
 	return hr;
 }
 
@@ -1556,9 +1573,14 @@ CBasePin* MultiCamFilter::GetPin(int n)
             retVal = NULL;
 			goto done;
         }
-		hr = InitializeOutputPin();        
 		hrOKnoRet;
     }
+
+	// Create the output pin if necessary
+    if (m_pOutput == NULL) {
+		hr = InitializeOutputPin();        
+		hrOKnoRet;
+	}
 
     // Return the appropriate pin
 	if (n >= 0 && n < MULTICAM_NUM_INPUT_PINS) {
@@ -2005,6 +2027,7 @@ HRESULT MultiCamFilter::OverlayB(int inID, IMediaSample *pOut,
 // return the number of pins we provide
 int MultiCamFilter::GetPinCount()
 {
+	vcamLog(95, "MultiCamFilter::GetPinCount");
 	return MULTICAM_NUM_PINS;
 }
 
@@ -2360,6 +2383,108 @@ HRESULT MultiCamFilter::CreateMockMediaType(/*out*/ AM_MEDIA_TYPE *pmt)
 //
 STDMETHODIMP MultiCamFilter::GetClassID(CLSID *pClsid)
 {
-    return CBaseFilter::GetClassID(pClsid);
+    vcamLog(95, "MultiCamFilter::GetClassID");
+    return CTransformFilter::GetClassID(pClsid);
 
 } // GetClassID
+
+HRESULT MultiCamFilter::StreamTime(CRefTime& rtStream)
+{
+	vcamLog(95, "MultiCamFilter::StreamTime");
+	return CTransformFilter::StreamTime(rtStream);
+}
+
+LONG MultiCamFilter::GetPinVersion()
+{
+	vcamLog(95, "MultiCamFilter::GetPinVersion");
+	LONG val = CTransformFilter::GetPinVersion();
+	vcamLog(95, "          %ld", val);
+	return val;
+}
+
+__out_opt LPAMOVIESETUP_FILTER MultiCamFilter::GetSetupData()
+{
+	vcamLog(95, "MultiCamFilter::GetSetupData");
+	return CTransformFilter::GetSetupData();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::EnumPins(__out  IEnumPins **ppEnum)
+{
+	vcamLog(95, "MultiCamFilter::EnumPins");
+	return CTransformFilter::EnumPins(ppEnum);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::FindPin(LPCWSTR Id, __out  IPin **ppPin)
+{
+	vcamLog(95, "MultiCamFilter::FindPin");
+	return CTransformFilter::FindPin(Id, ppPin);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::QueryFilterInfo(__out  FILTER_INFO *pInfo)
+{
+	vcamLog(95, "MultiCamFilter::QueryFilterInfo");
+	return CTransformFilter::QueryFilterInfo(pInfo);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::QueryVendorInfo(__out  LPWSTR *pVendorInfo)
+{
+	vcamLog(95, "MultiCamFilter::QueryVendorInfo");
+	return CTransformFilter::QueryVendorInfo(pVendorInfo);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::Stop( void)
+{
+	vcamLog(95, "MultiCamFilter::Stop");
+	return CTransformFilter::Stop();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::Pause( void)
+{
+	vcamLog(95, "MultiCamFilter::Pause");
+	return CTransformFilter::Pause();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::Run( 
+		REFERENCE_TIME tStart)
+{
+	vcamLog(95, "MultiCamFilter::Run");
+	return CTransformFilter::Run(tStart);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::GetState( 
+		/* [in] */ DWORD dwMilliSecsTimeout,
+		/* [annotation][out] */ 
+		__out  FILTER_STATE *State)
+{
+	vcamLog(95, "MultiCamFilter::GetState");
+	return CTransformFilter::GetState(dwMilliSecsTimeout, State);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::SetSyncSource( 
+		/* [annotation][in] */ 
+		__in_opt  IReferenceClock *pClock)
+{
+	vcamLog(95, "MultiCamFilter::SetSyncSource");
+	return CTransformFilter::SetSyncSource(pClock);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::GetSyncSource( 
+		/* [annotation][out] */ 
+		__deref_out_opt  IReferenceClock **pClock)
+{
+	vcamLog(95, "MultiCamFilter::GetSyncSource");
+	return CTransformFilter::GetSyncSource(pClock);
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::Register( void)
+{
+	vcamLog(95, "MultiCamFilter::Register");
+	return CTransformFilter::Register();
+}
+
+HRESULT STDMETHODCALLTYPE MultiCamFilter::Unregister( void)
+{
+	vcamLog(95, "MultiCamFilter::Unregister");
+	return CTransformFilter::Unregister();
+}
+

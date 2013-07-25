@@ -110,8 +110,8 @@ HRESULT CUpstreamCam::QueryInterface(REFIID riid, void **ppv)
     //Forward request for IAMStreamConfig & IKsPropertySet to the pin
     if(riid == _uuidof(IAMStreamConfig) || riid == _uuidof(IKsPropertySet))
 	{
-		hr = m_paStreams[0]->QueryInterface(riid, ppv);
 		vcamLog(50, "CUpstreamCam::QueryInterface, riid = %s", guidString);
+		hr = m_paStreams[0]->QueryInterface(riid, ppv);
 		if (hr==S_OK) {
 			vcamLog(50, "       S_OK");
 		}
@@ -125,8 +125,8 @@ HRESULT CUpstreamCam::QueryInterface(REFIID riid, void **ppv)
 	}
     else
 	{
-		hr = CSource::QueryInterface(riid, ppv);
 		vcamLog(50, "CUpstreamCam::QueryInterface (to CSource), riid = %s", guidString);
+		hr = CSource::QueryInterface(riid, ppv);
 		if (hr==S_OK) {
 			vcamLog(50, "       S_OK");
 		}
