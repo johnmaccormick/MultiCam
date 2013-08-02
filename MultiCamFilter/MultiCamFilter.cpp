@@ -1473,6 +1473,7 @@ HRESULT MultiCamFilter::ConnectUpstream()
 
 	if(!m_pInput->IsConnected())
 	{
+		vcamLog(10, "    MultiCamFilter::ConnectUpstream: m_pInput is not connected; will attempt to connect upstream filters");
 		for(int i=0; i<m_iNumUpstreamFilters; i++){
 			if (m_ppUpstreamFilter[i] != NULL) {
 				VCAM_ASSERT(!m_ppInputs[i]->IsConnected());
@@ -1489,12 +1490,25 @@ HRESULT MultiCamFilter::ConnectUpstream()
 					vcamLog(0, "ERROR: MultiCamFilter::ConnectUpstream: ConnectFilters() failed, hr = 0x%x", hr);
 					goto done;
 				}		
+				vcamLog(10, "    MultiCamFilter::ConnectUpstream: successfully connected upstream filter %d", i);
 			}
 		}
+	} else {
+		vcamLog(10, "    MultiCamFilter::ConnectUpstream: m_pInput is already connected");
 	}
 
 done:
 	SafeRelease(&pGraphBuilder);
+
+	vcamLog(10, "       MultiCamFilter::ConnectUpstream returning 0x%x",  hr);
+	return hr;
+}
+
+HRESULT MultiCamFilter::DisconnectUpstream() 
+{
+	vcamLog(10, "MultiCamFilter::DisconnectUpstream");
+	VCAM_ASSERT (m_pGraph!=NULL);
+	HRESULT hr = S_OK;
 
 	vcamLog(10, "       MultiCamFilter::ConnectUpstream returning 0x%x",  hr);
 	return hr;
@@ -2452,8 +2466,12 @@ HRESULT STDMETHODCALLTYPE MultiCamFilter::QueryVendorInfo(__out  LPWSTR *pVendor
 
 HRESULT STDMETHODCALLTYPE MultiCamFilter::Stop( void)
 {
-	vcamLog(95, "MultiCamFilter::Stop");
-	return CTransformFilter::Stop();
+	vcamLog(20, "MultiCamFilter::Stop");
+	HRESULT hr = CTransformFilter::Stop();
+	hrOKnoRet;
+
+	vcamLog(20, "       MultiCamFilter::Stop: returning 0x%x", hr);
+	return hr;
 }
 
 HRESULT STDMETHODCALLTYPE MultiCamFilter::Pause( void)

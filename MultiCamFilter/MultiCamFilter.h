@@ -112,6 +112,7 @@ protected:
 	BOOL m_fOverlayCameras;
 	
 	HRESULT ConnectUpstream();
+	HRESULT DisconnectUpstream();
 	virtual HRESULT InitializeInputPins();
 	virtual HRESULT InitializeOutputPin();
 	HRESULT JoinTemporaryGraph();
