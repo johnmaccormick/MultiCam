@@ -34,7 +34,7 @@ using namespace std;
 #define hrOKnoRet VCAM_ASSERT(SUCCEEDED(hr))
 #define VCAM_BAIL(_x_) if (!(_x_)) {return MULTICAM_FAIL;}
 
-char* MultiCamVersion = "1.0.2.15";
+char* MultiCamVersion = "1.0.2.19";
 
 //WCHAR *UPSTREAM_DEVICE_FRIENDLY_NAME[] = {L"PushSource Bitmap Filter"};
 //WCHAR *UPSTREAM_DEVICE_FRIENDLY_NAME[] = {L"Logitech Webcam 250"};
@@ -65,7 +65,8 @@ char* MultiCamVersion = "1.0.2.15";
 //											L"PushSource Bitmap Filter",
 //};
 
-GUID UNACCEPTABLE_CAMERA_GUIDS[] = {CLSID_Multicam, CLSID_HybridCam, CLSID_VirtualCamDoubler, CLSID_VirtualCamClone
+GUID UNACCEPTABLE_CAMERA_GUIDS[] = {CLSID_Multicam, CLSID_UpstreamCam, CLSID_HybridCam 
+									, CLSID_VirtualCamDoubler, CLSID_VirtualCamClone
 									, CLSID_VirtualCam3, CLSID_VirtualCam2, CLSID_VirtualCam
 									, CLSID_GoogleAdapter0 
 									, CLSID_GoogleAdapter1
@@ -88,8 +89,8 @@ string UNACCEPTABLE_CAMERA_NAMES[] = {
 	//, "Microsoft LifeCam HD-3000"
 };
 
-const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 480;
-const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 768;
+const LONG MultiCamFilter::s_IDEAL_CAMERA_HEIGHT = 480;//480;
+const LONG MultiCamFilter::s_MAX_CAMERA_HEIGHT = 768;//768;
 
 // from http://msdn.microsoft.com/en-us/library/dd940435(v=VS.85).aspx
 template <class T> void SafeRelease(T **ppT)
