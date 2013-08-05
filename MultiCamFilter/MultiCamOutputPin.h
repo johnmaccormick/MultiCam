@@ -28,18 +28,8 @@ public:
 		__in_opt LPCWSTR     pName);
 	virtual ~MultiCamOutputPin(void);
 
-	virtual HRESULT STDMETHODCALLTYPE Connect( 
-		/* [in] */ IPin *pReceivePin,
-		/* [annotation][in] */ 
-		__in_opt  const AM_MEDIA_TYPE *pmt);
 
-	virtual HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
-	virtual HRESULT CheckMediaType(const CMediaType *);
 
-	virtual HRESULT AttemptConnection(
-        IPin* pReceivePin,      // connect to this pin
-        const CMediaType* pmt   // using this type
-    );
 
 	//////////////////////////////////////////////////////////////////////////
 	//  IKsPropertySet
@@ -59,15 +49,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
     //  IPin
     //////////////////////////////////////////////////////////////////////////
-	virtual HRESULT STDMETHODCALLTYPE QueryPinInfo( 
-		/* [annotation][out] */ 
-		__out  PIN_INFO *pInfo);
+	virtual HRESULT STDMETHODCALLTYPE BeginFlush( void);
 
-	virtual HRESULT STDMETHODCALLTYPE ReceiveConnection( 
-		/* [in] */ IPin *pConnector,
-		/* [in] */ const AM_MEDIA_TYPE *pmt);
-
-	virtual HRESULT STDMETHODCALLTYPE Disconnect( void);
+	virtual HRESULT STDMETHODCALLTYPE Connect( 
+		/* [in] */ IPin *pReceivePin,
+		/* [annotation][in] */ 
+		__in_opt  const AM_MEDIA_TYPE *pmt);
 
 	virtual HRESULT STDMETHODCALLTYPE ConnectedTo( 
 		/* [annotation][out] */ 
@@ -77,6 +64,24 @@ public:
 		/* [annotation][out] */ 
 		__out  AM_MEDIA_TYPE *pmt);
 
+	virtual HRESULT STDMETHODCALLTYPE Disconnect( void);
+
+	virtual HRESULT STDMETHODCALLTYPE EndFlush( void);
+
+	virtual HRESULT STDMETHODCALLTYPE EndOfStream( void);
+
+	virtual HRESULT STDMETHODCALLTYPE EnumMediaTypes( 
+		/* [annotation][out] */ 
+		__out  IEnumMediaTypes **ppEnum);
+
+	virtual HRESULT STDMETHODCALLTYPE NewSegment( 
+		/* [in] */ REFERENCE_TIME tStart,
+		/* [in] */ REFERENCE_TIME tStop,
+		/* [in] */ double dRate);
+
+	virtual HRESULT STDMETHODCALLTYPE QueryAccept( 
+		/* [in] */ const AM_MEDIA_TYPE *pmt);
+
 	virtual HRESULT STDMETHODCALLTYPE QueryDirection( 
 		/* [annotation][out] */ 
 		__out  PIN_DIRECTION *pPinDir);
@@ -85,28 +90,69 @@ public:
 		/* [annotation][out] */ 
 		__out  LPWSTR *Id);
 
-	virtual HRESULT STDMETHODCALLTYPE QueryAccept( 
-		/* [in] */ const AM_MEDIA_TYPE *pmt);
-
-	virtual HRESULT STDMETHODCALLTYPE EnumMediaTypes( 
-		/* [annotation][out] */ 
-		__out  IEnumMediaTypes **ppEnum);
-
 	virtual HRESULT STDMETHODCALLTYPE QueryInternalConnections( 
 		/* [annotation][out] */ 
 		__out_ecount_part_opt(*nPin, *nPin)  IPin **apPin,
 		/* [out][in] */ ULONG *nPin);
 
-	virtual HRESULT STDMETHODCALLTYPE EndOfStream( void);
+	virtual HRESULT STDMETHODCALLTYPE QueryPinInfo( 
+		/* [annotation][out] */ 
+		__out  PIN_INFO *pInfo);
 
-	virtual HRESULT STDMETHODCALLTYPE BeginFlush( void);
+	virtual HRESULT STDMETHODCALLTYPE ReceiveConnection( 
+		/* [in] */ IPin *pConnector,
+		/* [in] */ const AM_MEDIA_TYPE *pmt);
 
-	virtual HRESULT STDMETHODCALLTYPE EndFlush( void);
 
-	virtual HRESULT STDMETHODCALLTYPE NewSegment( 
-		/* [in] */ REFERENCE_TIME tStart,
-		/* [in] */ REFERENCE_TIME tStop,
-		/* [in] */ double dRate);
+    //////////////////////////////////////////////////////////////////////////
+    //  CBasePin
+    //////////////////////////////////////////////////////////////////////////
+    virtual HRESULT Active(void);
+    virtual HRESULT AgreeMediaType(
+                        IPin *pReceivePin,      // connect to this pin
+                        const CMediaType *pmt);      // proposed type from Connect
+    virtual HRESULT AttemptConnection(
+        IPin* pReceivePin,      // connect to this pin
+        const CMediaType* pmt   // using this type
+    );
+    virtual HRESULT BreakConnect();
+    virtual bool CanReconnectWhenActive();
+    virtual HRESULT CheckConnect(IPin *);
+    virtual HRESULT CheckMediaType(const CMediaType *);
+    virtual HRESULT CompleteConnect(IPin *pReceivePin);
+    virtual double CurrentRate();
+    virtual REFERENCE_TIME CurrentStopTime();
+    virtual REFERENCE_TIME CurrentStartTime();
+    virtual STDMETHODIMP DisconnectInternal();
+    virtual void DisplayPinInfo(IPin *pReceivePin);
+    virtual void DisplayTypeInfo(IPin *pPin, const CMediaType *pmt);
+    virtual IPin * GetConnected();
+	virtual HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
+    virtual LONG GetMediaTypeVersion();
+    virtual HRESULT Inactive(void);
+    virtual void IncrementTypeVersion();
+    virtual BOOL IsConnected(void);
+    virtual BOOL IsStopped();
+    virtual LPWSTR Name();
+    virtual STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
+    virtual HRESULT Run(REFERENCE_TIME tStart);
+    virtual HRESULT SetMediaType(const CMediaType *);
+    virtual void SetReconnectWhenActive(bool bCanReconnect);
+    virtual STDMETHODIMP SetSink(IQualityControl * piqc);
+    virtual HRESULT TryMediaTypes(
+                        IPin *pReceivePin,          // connect to this pin
+                        __in_opt const CMediaType *pmt,  // proposed type from Connect
+                        IEnumMediaTypes *pEnum);    // try this enumerator
+
+
+
+
+
+
+
+
+
+
 
 protected:
 	MultiCamFilter *m_pParent;

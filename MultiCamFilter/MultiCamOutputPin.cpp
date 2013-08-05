@@ -566,3 +566,132 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::NewSegment(
 	vcamLog(50, "MultiCamOutputPin::NewSegment");
 	return CTransformOutputPin::NewSegment(tStart, tStop, dRate);
 }
+
+//////////////////////////////////////////////////////////////////////////
+//  CBasePin
+//////////////////////////////////////////////////////////////////////////
+HRESULT MultiCamOutputPin::Active(void) {
+	vcamLog(90, "MultiCamOutputPin::Active");
+	return CTransformOutputPin::Active();
+}
+
+HRESULT MultiCamOutputPin::AgreeMediaType(IPin *pReceivePin, const CMediaType *pmt) {
+	vcamLog(90, "MultiCamOutputPin::AgreeMediaType");
+	return CTransformOutputPin::AgreeMediaType(pReceivePin, pmt);
+}
+
+HRESULT MultiCamOutputPin::BreakConnect() {
+	vcamLog(90, "MultiCamOutputPin::BreakConnect");
+	return CTransformOutputPin::BreakConnect();
+}
+
+bool MultiCamOutputPin::CanReconnectWhenActive() {
+	vcamLog(90, "MultiCamOutputPin::CanReconnectWhenActive");
+	return CTransformOutputPin::CanReconnectWhenActive();
+}
+
+HRESULT MultiCamOutputPin::CheckConnect(IPin *p) {
+	vcamLog(90, "MultiCamOutputPin::CheckConnect");
+	return CTransformOutputPin::CheckConnect(p);
+}
+
+HRESULT MultiCamOutputPin::CompleteConnect(IPin *pReceivePin) {
+	vcamLog(90, "MultiCamOutputPin::CompleteConnect");
+	return CTransformOutputPin::CompleteConnect(pReceivePin);
+}
+
+double MultiCamOutputPin::CurrentRate() {
+	vcamLog(90, "MultiCamOutputPin::CurrentRate");
+	return CTransformOutputPin::CurrentRate();
+}
+
+REFERENCE_TIME MultiCamOutputPin::CurrentStopTime() {
+	vcamLog(90, "MultiCamOutputPin::TIME");
+	return CTransformOutputPin::CurrentStopTime();
+}
+
+REFERENCE_TIME MultiCamOutputPin::CurrentStartTime() {
+	vcamLog(90, "MultiCamOutputPin::TIME");
+	return CTransformOutputPin::CurrentStartTime();
+}
+
+STDMETHODIMP MultiCamOutputPin::DisconnectInternal() {
+	vcamLog(90, "MultiCamOutputPin::DisconnectInternal");
+	return CTransformOutputPin::DisconnectInternal();
+}
+
+void MultiCamOutputPin::DisplayPinInfo(IPin *pReceivePin) {
+	vcamLog(90, "MultiCamOutputPin::DisplayPinInfo");
+	return CTransformOutputPin::DisplayPinInfo(pReceivePin);
+}
+
+void MultiCamOutputPin::DisplayTypeInfo(IPin *pPin, const CMediaType *pmt) {
+	vcamLog(90, "MultiCamOutputPin::DisplayTypeInfo");
+	return CTransformOutputPin::DisplayTypeInfo(pPin, pmt);
+}
+
+IPin * MultiCamOutputPin::GetConnected() {
+	vcamLog(90, "MultiCamOutputPin::GetConnected");
+	return CTransformOutputPin::GetConnected();
+}
+
+LONG MultiCamOutputPin::GetMediaTypeVersion() {
+	vcamLog(90, "MultiCamOutputPin::GetMediaTypeVersion");
+	return CTransformOutputPin::GetMediaTypeVersion();
+}
+
+HRESULT MultiCamOutputPin::Inactive(void) {
+	vcamLog(90, "MultiCamOutputPin::Inactive");
+	return CTransformOutputPin::Inactive();
+}
+
+void MultiCamOutputPin::IncrementTypeVersion() {
+	vcamLog(90, "MultiCamOutputPin::IncrementTypeVersion");
+	return CTransformOutputPin::IncrementTypeVersion();
+}
+
+BOOL MultiCamOutputPin::IsConnected(void) {
+	vcamLog(90, "MultiCamOutputPin::IsConnected");
+	return CTransformOutputPin::IsConnected();
+}
+
+BOOL MultiCamOutputPin::IsStopped() {
+	vcamLog(90, "MultiCamOutputPin::IsStopped");
+	return CTransformOutputPin::IsStopped();
+}
+
+LPWSTR MultiCamOutputPin::Name() {
+	vcamLog(90, "MultiCamOutputPin::Name");
+	return CTransformOutputPin::Name();
+}
+
+STDMETHODIMP MultiCamOutputPin::Notify(IBaseFilter * pSender, Quality q) {
+	vcamLog(90, "MultiCamOutputPin::Notify");
+	return CTransformOutputPin::Notify(pSender, q);
+}
+
+HRESULT MultiCamOutputPin::Run(REFERENCE_TIME tStart) {
+	vcamLog(90, "MultiCamOutputPin::Run");
+	return CTransformOutputPin::Run(tStart);
+}
+
+HRESULT MultiCamOutputPin::SetMediaType(const CMediaType *p) {
+	vcamLog(90, "MultiCamOutputPin::SetMediaType");
+	return CTransformOutputPin::SetMediaType(p);
+}
+
+void MultiCamOutputPin::SetReconnectWhenActive(bool bCanReconnect) {
+	vcamLog(90, "MultiCamOutputPin::SetReconnectWhenActive");
+	return CTransformOutputPin::SetReconnectWhenActive(bCanReconnect);
+}
+
+STDMETHODIMP MultiCamOutputPin::SetSink(IQualityControl * piqc) {
+	vcamLog(90, "MultiCamOutputPin::SetSink");
+	return CTransformOutputPin::SetSink(piqc);
+}
+
+HRESULT MultiCamOutputPin::TryMediaTypes(IPin *pReceivePin,__in_opt const CMediaType *pmt, IEnumMediaTypes *pEnum) {
+	vcamLog(90, "MultiCamOutputPin::TryMediaTypes");
+	return CTransformOutputPin::TryMediaTypes(pReceivePin, pmt, pEnum);
+}
+

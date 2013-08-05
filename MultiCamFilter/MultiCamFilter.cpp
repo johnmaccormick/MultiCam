@@ -2493,7 +2493,20 @@ HRESULT STDMETHODCALLTYPE MultiCamFilter::GetState(
 		__out  FILTER_STATE *State)
 {
 	vcamLog(95, "MultiCamFilter::GetState");
-	return CTransformFilter::GetState(dwMilliSecsTimeout, State);
+	HRESULT hr = CTransformFilter::GetState(dwMilliSecsTimeout, State);
+	hrOKnoRet;
+	switch(*State) {
+	case State_Stopped:
+		vcamLog(95, "    MultiCamFilter::GetState: State_Stopped");
+		break;
+	case State_Paused:
+		vcamLog(95, "    MultiCamFilter::GetState: State_Paused");
+		break;
+	case State_Running:
+		vcamLog(95, "    MultiCamFilter::GetState: State_Running");
+		break;
+	}
+	return hr;
 }
 
 HRESULT STDMETHODCALLTYPE MultiCamFilter::SetSyncSource( 
