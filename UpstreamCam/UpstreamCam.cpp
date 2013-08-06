@@ -113,13 +113,13 @@ HRESULT CUpstreamCam::QueryInterface(REFIID riid, void **ppv)
 		vcamLog(50, "CUpstreamCam::QueryInterface, riid = %s", guidString);
 		hr = m_paStreams[0]->QueryInterface(riid, ppv);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: E_POINTER");
 		}
         return hr;
 	}
@@ -128,13 +128,13 @@ HRESULT CUpstreamCam::QueryInterface(REFIID riid, void **ppv)
 		vcamLog(50, "CUpstreamCam::QueryInterface (to CSource), riid = %s", guidString);
 		hr = CSource::QueryInterface(riid, ppv);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CUpstreamCam::QueryInterface: E_POINTER");
 		}
         return hr;
 	}
@@ -396,20 +396,20 @@ HRESULT CUpstreamCamStream::QueryInterface(REFIID riid, void **ppv)
 		hr =  CSourceStream::QueryInterface(riid, ppv);
 		vcamLog(50, "CUpstreamCamStream::QueryInterface, riid = %s", guidString);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CUpstreamCamStream::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CUpstreamCamStream::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CUpstreamCamStream::QueryInterface: E_POINTER");
 		}
 		return hr;
 	}
     AddRef();
 
 	vcamLog(50, "CUpstreamCamStream::QueryInterface, riid = %s", guidString);
-	vcamLog(50, "       S_OK");
+	vcamLog(50, "       CUpstreamCamStream::QueryInterface: S_OK");
 
     return S_OK;
 }
@@ -480,18 +480,18 @@ HRESULT CUpstreamCamStream::GetMediaType(int iPosition, CMediaType *pmt)
 	vcamLog(50, "CUpstreamCamStream::GetMediaType, iPosition = %d", iPosition);
 
     if(iPosition < 0) {
-		vcamLog(50, "    GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
+		vcamLog(50, "    CUpstreamCamStream::GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
 		return E_INVALIDARG;
 	}
     if(iPosition > 8) {
-		vcamLog(50, "    GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
+		vcamLog(50, "    CUpstreamCamStream::GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
 		return VFW_S_NO_MORE_ITEMS;
 	}
 	
     if(iPosition == 0) 
     {
         *pmt = m_mt;
-		vcamLog(50, "    GetMediaType returning S_OK (0x%x)", S_OK);
+		vcamLog(50, "    CUpstreamCamStream::GetMediaType returning S_OK (0x%x)", S_OK);
         return S_OK;
     }
 
@@ -745,10 +745,10 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::QueryPinInfo(
   hr = CSourceStream::QueryPinInfo(pInfo);
 
   if(pInfo->dir==PINDIR_INPUT) {
-	  vcamLog(50, "   PINDIR_INPUT");
+	  vcamLog(50, "   CUpstreamCamStream::QueryPinInfo: PINDIR_INPUT");
   }
   if(pInfo->dir==PINDIR_OUTPUT) {
-	  vcamLog(50, "   PINDIR_OUTPUT");
+	  vcamLog(50, "   CUpstreamCamStream::QueryPinInfo: PINDIR_OUTPUT");
   }
   return hr;
 }
@@ -765,13 +765,13 @@ STDMETHODIMP  CUpstreamCamStream::NonDelegatingQueryInterface(REFIID riid, __der
 	Riid2String(riid, guidString);
 	vcamLog(50, "CUpstreamCamStream::NonDelegatingQueryInterface, riid = %s", guidString);
 	if (hr==NOERROR) {
-		vcamLog(50, "       NOERROR");
+		vcamLog(50, "       CUpstreamCamStream::NonDelegatingQueryInterface: NOERROR");
 	}
 	if (hr==E_NOINTERFACE ) {
-		vcamLog(50, "       E_NOINTERFACE ");
+		vcamLog(50, "       CUpstreamCamStream::NonDelegatingQueryInterface: E_NOINTERFACE ");
 	}
 	if (hr==E_POINTER) {
-		vcamLog(50, "       E_POINTER");
+		vcamLog(50, "       CUpstreamCamStream::NonDelegatingQueryInterface: E_POINTER");
 	}
 	return hr;
 }
@@ -810,9 +810,9 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::ConnectedTo(/* [annotation][out] *
 	vcamLog(50, "CUpstreamCamStream::ConnectedTo");
 	HRESULT hr = CSourceStream::ConnectedTo(pPin);
 	if (hr == S_OK) {
-		vcamLog(50, "   S_OK");
+		vcamLog(50, "   CUpstreamCamStream::ConnectedTo: S_OK");
 	} else {
-		vcamLog(50, "   not S_OK");
+		vcamLog(50, "   CUpstreamCamStream::ConnectedTo: not S_OK");
 	}
 	return hr;
 }
@@ -824,11 +824,11 @@ HRESULT STDMETHODCALLTYPE CUpstreamCamStream::EnumMediaTypes(
 	vcamLog(50, "CUpstreamCamStream::EnumMediaTypes");
 	HRESULT hr = CSourceStream::EnumMediaTypes(ppEnum);
 	if (hr == S_OK) {
-		vcamLog(50, "   S_OK");
+		vcamLog(50, "   CUpstreamCamStream::EnumMediaTypes: S_OK");
 	} else if (hr == VFW_E_NOT_CONNECTED) {
-		vcamLog(50, "   VFW_E_NOT_CONNECTED");
+		vcamLog(50, "   CUpstreamCamStream::EnumMediaTypes: VFW_E_NOT_CONNECTED");
 	} else {
-		vcamLog(50, "   error");
+		vcamLog(50, "   CUpstreamCamStream::EnumMediaTypes: error");
 	}
 	return hr;
 }
@@ -843,7 +843,7 @@ HRESULT  CUpstreamCamStream::CompleteConnect(IPin *pReceivePin)
 {
 	vcamLog(50, "CUpstreamCamStream::CompleteConnect");
 	HRESULT hr = CSourceStream::CompleteConnect(pReceivePin);
-	vcamLog(50, "     CompleteConnect returning %d", (int) hr);
+	vcamLog(50, "     CUpstreamCamStream::CompleteConnect returning %d", (int) hr);
 	return hr;
 }
 
@@ -851,7 +851,7 @@ HRESULT  CUpstreamCamStream::CheckConnect(IPin *pPin)
 {
 	vcamLog(50, "CUpstreamCamStream::CheckConnect");
 	HRESULT hr = CSourceStream::CheckConnect(pPin);
-	vcamLog(50, "     CheckConnect returning %d", (int) hr);
+	vcamLog(50, "     CUpstreamCamStream::CheckConnect returning %d", (int) hr);
 	return hr;
 }
 
@@ -859,7 +859,7 @@ HRESULT  CUpstreamCamStream::BreakConnect()
 {
 	vcamLog(50, "CUpstreamCamStream::BreakConnect");
 	HRESULT hr = CSourceStream::BreakConnect();
-	vcamLog(50, "     BreakConnect returning %d", (int) hr);
+	vcamLog(50, "     CUpstreamCamStream::BreakConnect returning %d", (int) hr);
 	return hr;
 }
 

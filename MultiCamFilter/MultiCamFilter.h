@@ -41,6 +41,8 @@ public:
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
+    STDMETHODIMP_(ULONG) NonDelegatingRelease();
+
     // Overrriden from CTransformFilter base class
     HRESULT Transform(IMediaSample *pIn, IMediaSample *pOut);
     HRESULT CheckInputType(const CMediaType *mtIn);
@@ -185,6 +187,18 @@ protected:
 	clock_t m_lastFrameTime;
 #define NUM_FRAME_RATES 5
 	double m_frameRates[NUM_FRAME_RATES];
+
+public:
+	virtual BOOL IsActive();
+    virtual BOOL IsStopped();
+	virtual HRESULT NotifyEvent(
+        long EventCode,
+        LONG_PTR EventParam1,
+        LONG_PTR EventParam2);
+    virtual __out_opt IFilterGraph *GetFilterGraph();
+    virtual HRESULT ReconnectPin(IPin *pPin, __in_opt AM_MEDIA_TYPE const *pmt);
+    virtual void IncrementPinVersion();
+    virtual CCritSec*	pStateLock(void);
 
 }; // MultiCamFilter
 

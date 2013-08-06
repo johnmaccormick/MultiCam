@@ -1522,6 +1522,11 @@ STDMETHODIMP MultiCamFilter::QueryInterface(REFIID riid, __deref_out void **ppv)
 
 	HRESULT hr = S_OK;
 
+	// for debugging
+	if (m_pOutput != NULL) {
+		((MultiCamOutputPin*)m_pOutput)->CheckConnectedTo();
+	}
+
 	//Forward request for IAMStreamConfig & IKsPropertySet to the pin
 	if(riid == _uuidof(IAMStreamConfig) || riid == _uuidof(IKsPropertySet))
 	{
@@ -1596,6 +1601,11 @@ CBasePin* MultiCamFilter::GetPin(int n)
     HRESULT hr = S_OK;
 	CBasePin* retVal = NULL;
 	vcamLog(50, "MultiCamFilter::GetPin, n = %d", n);
+
+	// for debugging
+	if (m_pOutput != NULL) {
+		((MultiCamOutputPin*)m_pOutput)->CheckConnectedTo();
+	}
 
     // Create the input pins if necessary
     if (m_pInput == NULL) {
@@ -2430,7 +2440,13 @@ LONG MultiCamFilter::GetPinVersion()
 {
 	vcamLog(95, "MultiCamFilter::GetPinVersion");
 	LONG val = CTransformFilter::GetPinVersion();
-	vcamLog(95, "          %ld", val);
+	vcamLog(95, "       MultiCamFilter::GetPinVersion: %ld", val);
+
+	// for debugging
+	if (m_pOutput != NULL) {
+		((MultiCamOutputPin*)m_pOutput)->CheckConnectedTo();
+	}
+
 	return val;
 }
 
@@ -2535,5 +2551,52 @@ HRESULT STDMETHODCALLTYPE MultiCamFilter::Unregister( void)
 {
 	vcamLog(95, "MultiCamFilter::Unregister");
 	return CTransformFilter::Unregister();
+}
+
+STDMETHODIMP_(ULONG) MultiCamFilter::NonDelegatingRelease()
+{
+	vcamLog(95, "MultiCamFilter::NonDelegatingRelease");
+
+	// for debugging
+	if (m_pOutput != NULL) {
+		((MultiCamOutputPin*)m_pOutput)->CheckConnectedTo();
+	}
+
+	return CTransformFilter::NonDelegatingRelease();
+}
+
+BOOL MultiCamFilter::IsActive() {
+	vcamLog(95, "MultiCamFilter::IsActive");
+	return CTransformFilter::IsActive();
+}
+
+BOOL MultiCamFilter::IsStopped() {
+	vcamLog(95, "MultiCamFilter::IsStopped");
+	return CTransformFilter::IsStopped();
+}
+
+HRESULT MultiCamFilter::NotifyEvent(long EventCode,LONG_PTR EventParam1,LONG_PTR EventParam2) {
+	vcamLog(95, "MultiCamFilter::NotifyEvent");
+	return CTransformFilter::NotifyEvent(EventCode,EventParam1,EventParam2);
+}
+
+__out_opt IFilterGraph *MultiCamFilter::GetFilterGraph() {
+	vcamLog(95, "MultiCamFilter::GetFilterGraph");
+	return CTransformFilter::GetFilterGraph();
+}
+
+HRESULT MultiCamFilter::ReconnectPin(IPin *pPin, __in_opt AM_MEDIA_TYPE const *pmt) {
+	vcamLog(95, "MultiCamFilter::ReconnectPin");
+	return CTransformFilter::ReconnectPin(pPin, pmt);
+}
+
+void MultiCamFilter::IncrementPinVersion() {
+	vcamLog(95, "MultiCamFilter::IncrementPinVersion");
+	return CTransformFilter::IncrementPinVersion();
+}
+
+CCritSec* MultiCamFilter::pStateLock(void) {
+	vcamLog(95, "MultiCamFilter::pStateLock");
+	return CTransformFilter::pStateLock();
 }
 

@@ -120,6 +120,10 @@ STDMETHODIMP MultiCamOutputPin::QueryInterface(REFIID riid, __deref_out void **p
 	hr = GetOwner()->QueryInterface(riid,ppv);
 
 	vcamLog(10, "MultiCamOutputPin::QueryInterface, riid = %s", guidString);
+
+	// for debugging
+	CheckConnectedTo();
+	
 	if (hr==S_OK) {
 		vcamLog(10, "       MultiCamOutputPin::QueryInterface returning S_OK");
 	}
@@ -259,12 +263,19 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::GetNumberOfCapabilities(int *piCoun
 	*piSize = sizeof(VIDEO_STREAM_CONFIG_CAPS);
 
 	vcamLog(10, "MultiCamOutputPin::GetNumberOfCapabilities, Count = %d, Size = %d", *piCount, *piSize);
+	
+	// for debugging
+	CheckConnectedTo();
+
     return hr;
 }
 
 HRESULT STDMETHODCALLTYPE MultiCamOutputPin::GetStreamCaps(int iIndex, AM_MEDIA_TYPE **ppmt, BYTE *pSCC)
 {
 	vcamLog(10, "MultiCamOutputPin::GetStreamCaps, iIndex = %d", iIndex);
+	
+	// for debugging
+	CheckConnectedTo();
 
 	HRESULT hr = S_OK;
 
@@ -305,10 +316,10 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::SetFormat(AM_MEDIA_TYPE *pmt)
 	CMediaType new_mt = CMediaType(*pmt, &hr);
 	hrOK;
 	if (new_mt == m_mt) {
-		vcamLog(10, "MultiCamOutputPin::SetFormat: new media type differs from old media type");
+		vcamLog(10, "MultiCamOutputPin::SetFormat: new media type is the same as old media type");
 	} 
 	else {
-		vcamLog(10, "MultiCamOutputPin::SetFormat: new media type is the same as old media type");		
+		vcamLog(10, "MultiCamOutputPin::SetFormat: new media type differs from old media type");		
 	}
 
     m_mt = *pmt;
@@ -318,10 +329,17 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::SetFormat(AM_MEDIA_TYPE *pmt)
     if(pin)
     {
 		IFilterGraph *pGraph = m_pParent->m_pGraph;
-        pGraph->Reconnect(this);
-		vcamLog(10, "   MultiCamOutputPin::SetFormat returning S_OK (reconnected to graph)");
+		// jmac -- temporary hope-for-best experiment
+		// Original code was the Reconnect(), but I don't how why -- Removing it doesn't seem to break anything
+        //pGraph->Reconnect(this);
+
+		// New experiment was this Disconnect(), but that didn't fix anything
+		// this->Disconnect();
+		// end jmac temporary hope-for-best experiment
+
+		vcamLog(10, "   MultiCamOutputPin::SetFormat returning S_OK (pin was connected)");
     } else {
-		vcamLog(10, "   MultiCamOutputPin::SetFormat returning S_OK (pin not connected)");
+		vcamLog(10, "   MultiCamOutputPin::SetFormat returning S_OK (pin was not connected)");
 	}
 	SafeRelease(&pin);
 
@@ -495,9 +513,11 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::ConnectedTo(
 	vcamLog(50, "MultiCamOutputPin::ConnectedTo");
 	HRESULT hr = CTransformOutputPin::ConnectedTo(pPin);
 	if (hr == S_OK) {
-		vcamLog(50, "   S_OK");
+		vcamLog(50, "   MultiCamOutputPin::ConnectedTo: returning S_OK");
+	} else if (hr == VFW_E_NOT_CONNECTED){
+		vcamLog(50, "   MultiCamOutputPin::ConnectedTo: returning VFW_E_NOT_CONNECTED");
 	} else {
-		vcamLog(50, "   not S_OK");
+		vcamLog(50, "   MultiCamOutputPin::ConnectedTo: returning 0x%x", hr);
 	}
 	return hr;
 }
@@ -513,6 +533,10 @@ HRESULT STDMETHODCALLTYPE MultiCamOutputPin::QueryDirection(
 		/* [annotation][out] */ 
 		__out  PIN_DIRECTION *pPinDir) {
 	vcamLog(50, "MultiCamOutputPin::QueryDirection");
+
+	// for debugging
+	CheckConnectedTo();
+	
 	return CTransformOutputPin::QueryDirection(pPinDir);
 }
 
@@ -606,12 +630,12 @@ double MultiCamOutputPin::CurrentRate() {
 }
 
 REFERENCE_TIME MultiCamOutputPin::CurrentStopTime() {
-	vcamLog(90, "MultiCamOutputPin::TIME");
+	vcamLog(90, "MultiCamOutputPin::CurrentStopTime");
 	return CTransformOutputPin::CurrentStopTime();
 }
 
 REFERENCE_TIME MultiCamOutputPin::CurrentStartTime() {
-	vcamLog(90, "MultiCamOutputPin::TIME");
+	vcamLog(90, "MultiCamOutputPin::CurrentStartTime");
 	return CTransformOutputPin::CurrentStartTime();
 }
 
@@ -695,3 +719,62 @@ HRESULT MultiCamOutputPin::TryMediaTypes(IPin *pReceivePin,__in_opt const CMedia
 	return CTransformOutputPin::TryMediaTypes(pReceivePin, pmt, pEnum);
 }
 
+HRESULT MultiCamOutputPin::DecideAllocator(IMemInputPin * pPin, __deref_out IMemAllocator ** pAlloc) {
+	vcamLog(90, "MultiCamOutputPin::DecideAllocator");
+	return CTransformOutputPin::DecideAllocator(pPin, pAlloc);
+}
+
+HRESULT MultiCamOutputPin::DecideBufferSize(IMemAllocator * pAlloc, __inout ALLOCATOR_PROPERTIES * ppropInputRequest) {
+	vcamLog(90, "MultiCamOutputPin::DecideBufferSize");
+	return CTransformOutputPin::DecideBufferSize(pAlloc, ppropInputRequest);
+}
+
+HRESULT MultiCamOutputPin::GetDeliveryBuffer(__deref_out IMediaSample ** ppSample, __in_opt REFERENCE_TIME * pStartTime, __in_opt REFERENCE_TIME * pEndTime, DWORD dwFlags) {
+	vcamLog(90, "MultiCamOutputPin::GetDeliveryBuffer");
+	return CTransformOutputPin::GetDeliveryBuffer(ppSample, pStartTime, pEndTime, dwFlags);
+}
+
+HRESULT MultiCamOutputPin::Deliver(IMediaSample *s) {
+	vcamLog(90, "MultiCamOutputPin::Deliver");
+	return CTransformOutputPin::Deliver(s);
+}
+
+HRESULT MultiCamOutputPin::InitAllocator(__deref_out IMemAllocator **ppAlloc) {
+	vcamLog(90, "MultiCamOutputPin::InitAllocator");
+	return CTransformOutputPin::InitAllocator(ppAlloc);
+}
+
+HRESULT MultiCamOutputPin::DeliverEndOfStream(void) {
+	vcamLog(90, "MultiCamOutputPin::DeliverEndOfStream");
+	return CTransformOutputPin::DeliverEndOfStream();
+}
+
+HRESULT MultiCamOutputPin::DeliverBeginFlush(void) {
+	vcamLog(90, "MultiCamOutputPin::DeliverBeginFlush");
+	return CTransformOutputPin::DeliverBeginFlush();
+}
+
+HRESULT MultiCamOutputPin::DeliverEndFlush(void) {
+	vcamLog(90, "MultiCamOutputPin::DeliverEndFlush");
+	return CTransformOutputPin::DeliverEndFlush();
+}
+
+HRESULT MultiCamOutputPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate) {
+	vcamLog(90, "MultiCamOutputPin::DeliverNewSegment");
+	return CTransformOutputPin::DeliverNewSegment(tStart, tStop, dRate);
+}
+
+// For debugging
+void MultiCamOutputPin::CheckConnectedTo() {
+	HRESULT hr = S_OK;
+	IPin* pin = NULL; 
+	hr = ConnectedTo(&pin);
+	VCAM_ASSERT(SUCCEEDED(hr) || hr == VFW_E_NOT_CONNECTED);
+	if(pin)
+	{
+		vcamLog(95, "   MultiCamOutputPin::CheckConnectedTo: got downstream pin");
+	} else {
+		vcamLog(95, "   MultiCamOutputPin::CheckConnectedTo: no downstream pin found");
+	}
+	SafeRelease(&pin);
+}

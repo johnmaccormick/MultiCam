@@ -112,13 +112,13 @@ HRESULT CVCam::QueryInterface(REFIID riid, void **ppv)
 		hr = m_paStreams[0]->QueryInterface(riid, ppv);
 		vcamLog(50, "CVCam::QueryInterface, riid = %s", guidString);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CVCam::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CVCam::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CVCam::QueryInterface: E_POINTER");
 		}
         return hr;
 	}
@@ -127,13 +127,13 @@ HRESULT CVCam::QueryInterface(REFIID riid, void **ppv)
 		hr = CSource::QueryInterface(riid, ppv);
 		vcamLog(50, "CVCam::QueryInterface (to CSource), riid = %s", guidString);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CVCam::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CVCam::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CVCam::QueryInterface: E_POINTER");
 		}
         return hr;
 	}
@@ -394,20 +394,20 @@ HRESULT CVCamStream::QueryInterface(REFIID riid, void **ppv)
 		hr =  CSourceStream::QueryInterface(riid, ppv);
 		vcamLog(50, "CVCamStream::QueryInterface, riid = %s", guidString);
 		if (hr==S_OK) {
-			vcamLog(50, "       S_OK");
+			vcamLog(50, "       CVCamStream::QueryInterface: S_OK");
 		}
 		if (hr==E_NOINTERFACE ) {
-			vcamLog(50, "       E_NOINTERFACE ");
+			vcamLog(50, "       CVCamStream::QueryInterface: E_NOINTERFACE ");
 		}
 		if (hr==E_POINTER) {
-			vcamLog(50, "       E_POINTER");
+			vcamLog(50, "       CVCamStream::QueryInterface: E_POINTER");
 		}
 		return hr;
 	}
     AddRef();
 
 	vcamLog(50, "CVCamStream::QueryInterface, riid = %s", guidString);
-	vcamLog(50, "       S_OK");
+	vcamLog(50, "       CVCamStream::QueryInterface: S_OK");
 
     return S_OK;
 }
@@ -477,18 +477,18 @@ HRESULT CVCamStream::GetMediaType(int iPosition, CMediaType *pmt)
 	vcamLog(50, "CVCamStream::GetMediaType, iPosition = %d", iPosition);
 
     if(iPosition < 0) {
-		vcamLog(50, "    GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
+		vcamLog(50, "    CVCamStream::GetMediaType returning E_INVALIDARG (0x%x)", E_INVALIDARG);
 		return E_INVALIDARG;
 	}
     if(iPosition > 8) {
-		vcamLog(50, "    GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
+		vcamLog(50, "    CVCamStream::GetMediaType returning VFW_S_NO_MORE_ITEMS (0x%x)", VFW_S_NO_MORE_ITEMS);
 		return VFW_S_NO_MORE_ITEMS;
 	}
 	
     if(iPosition == 0) 
     {
         *pmt = m_mt;
-		vcamLog(50, "    GetMediaType returning S_OK (0x%x)", S_OK);
+		vcamLog(50, "    CVCamStream::GetMediaType returning S_OK (0x%x)", S_OK);
         return S_OK;
     }
 
@@ -521,7 +521,7 @@ HRESULT CVCamStream::GetMediaType(int iPosition, CMediaType *pmt)
 	vcamLog(50, "CVCamStream::GetMediaType: got media type:");
 	vcamLogFormat(50, pmt);
 
-	vcamLog(50, "    GetMediaType returning NOERROR (0x%x)", NOERROR);
+	vcamLog(50, "    CVCamStream::GetMediaType returning NOERROR (0x%x)", NOERROR);
     return NOERROR;
 
 } // GetMediaType
@@ -676,7 +676,7 @@ HRESULT STDMETHODCALLTYPE CVCamStream::GetStreamCaps(int iIndex, AM_MEDIA_TYPE *
     pvscc->MinBitsPerSecond = (80 * 60 * 3 * 8) / 5;
     pvscc->MaxBitsPerSecond = 640 * 480 * 3 * 8 * 50;
 
-	vcamLog(50, "        S_OK");
+	vcamLog(50, "        CVCamStream::GetStreamCaps: S_OK");
     return S_OK;
 }
 
@@ -739,10 +739,10 @@ HRESULT STDMETHODCALLTYPE CVCamStream::QueryPinInfo(
   hr = CSourceStream::QueryPinInfo(pInfo);
 
   if(pInfo->dir==PINDIR_INPUT) {
-	  vcamLog(50, "   PINDIR_INPUT");
+	  vcamLog(50, "   CVCamStream::QueryPinInfo: PINDIR_INPUT");
   }
   if(pInfo->dir==PINDIR_OUTPUT) {
-	  vcamLog(50, "   PINDIR_OUTPUT");
+	  vcamLog(50, "   CVCamStream::QueryPinInfo: PINDIR_OUTPUT");
   }
   return hr;
 }
@@ -759,13 +759,13 @@ STDMETHODIMP  CVCamStream::NonDelegatingQueryInterface(REFIID riid, __deref_out 
 	Riid2String(riid, guidString);
 	vcamLog(50, "CVCamStream::NonDelegatingQueryInterface, riid = %s", guidString);
 	if (hr==NOERROR) {
-		vcamLog(50, "       NOERROR");
+		vcamLog(50, "       CVCamStream::NonDelegatingQueryInterface: NOERROR");
 	}
 	if (hr==E_NOINTERFACE ) {
-		vcamLog(50, "       E_NOINTERFACE ");
+		vcamLog(50, "       CVCamStream::NonDelegatingQueryInterface: E_NOINTERFACE ");
 	}
 	if (hr==E_POINTER) {
-		vcamLog(50, "       E_POINTER");
+		vcamLog(50, "       CVCamStream::NonDelegatingQueryInterface: E_POINTER");
 	}
 	return hr;
 }
@@ -804,9 +804,9 @@ HRESULT STDMETHODCALLTYPE CVCamStream::ConnectedTo(/* [annotation][out] */
 	vcamLog(50, "CVCamStream::ConnectedTo");
 	HRESULT hr = CSourceStream::ConnectedTo(pPin);
 	if (hr == S_OK) {
-		vcamLog(50, "   S_OK");
+		vcamLog(50, "   CVCamStream::ConnectedTo: S_OK");
 	} else {
-		vcamLog(50, "   not S_OK");
+		vcamLog(50, "   CVCamStream::ConnectedTo: not S_OK");
 	}
 	return hr;
 }
@@ -818,11 +818,11 @@ HRESULT STDMETHODCALLTYPE CVCamStream::EnumMediaTypes(
 	vcamLog(50, "CVCamStream::EnumMediaTypes");
 	HRESULT hr = CSourceStream::EnumMediaTypes(ppEnum);
 	if (hr == S_OK) {
-		vcamLog(50, "   S_OK");
+		vcamLog(50, "   CVCamStream::EnumMediaTypes: S_OK");
 	} else if (hr == VFW_E_NOT_CONNECTED) {
-		vcamLog(50, "   VFW_E_NOT_CONNECTED");
+		vcamLog(50, "   CVCamStream::EnumMediaTypes: VFW_E_NOT_CONNECTED");
 	} else {
-		vcamLog(50, "   error");
+		vcamLog(50, "   CVCamStream::EnumMediaTypes: error");
 	}
 	return hr;
 }
@@ -837,7 +837,7 @@ HRESULT  CVCamStream::CompleteConnect(IPin *pReceivePin)
 {
 	vcamLog(50, "CVCamStream::CompleteConnect");
 	HRESULT hr = CSourceStream::CompleteConnect(pReceivePin);
-	vcamLog(50, "     CompleteConnect returning %d", (int) hr);
+	vcamLog(50, "     CVCamStream::CompleteConnect returning %d", (int) hr);
 	return hr;
 }
 
@@ -845,7 +845,7 @@ HRESULT  CVCamStream::CheckConnect(IPin *pPin)
 {
 	vcamLog(50, "CVCamStream::CheckConnect");
 	HRESULT hr = CSourceStream::CheckConnect(pPin);
-	vcamLog(50, "     CheckConnect returning %d", (int) hr);
+	vcamLog(50, "     CVCamStream::CheckConnect returning %d", (int) hr);
 	return hr;
 }
 
@@ -853,7 +853,7 @@ HRESULT  CVCamStream::BreakConnect()
 {
 	vcamLog(50, "CVCamStream::BreakConnect");
 	HRESULT hr = CSourceStream::BreakConnect();
-	vcamLog(50, "     BreakConnect returning %d", (int) hr);
+	vcamLog(50, "     CVCamStream::BreakConnect returning %d", (int) hr);
 	return hr;
 }
 

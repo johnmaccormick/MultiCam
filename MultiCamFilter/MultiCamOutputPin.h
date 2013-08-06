@@ -144,13 +144,25 @@ public:
                         __in_opt const CMediaType *pmt,  // proposed type from Connect
                         IEnumMediaTypes *pEnum);    // try this enumerator
 
-
-
-
-
-
-
-
+	/////////////////////////////////////////////////////////
+	//////// CBaseOutputPin
+	/////////////////////////////////////////////////////////
+	virtual HRESULT DecideAllocator(IMemInputPin * pPin, __deref_out IMemAllocator ** pAlloc);
+	virtual HRESULT DecideBufferSize(IMemAllocator * pAlloc, 
+		__inout ALLOCATOR_PROPERTIES * ppropInputRequest);
+	virtual HRESULT GetDeliveryBuffer(__deref_out IMediaSample ** ppSample,
+                                      __in_opt REFERENCE_TIME * pStartTime,
+                                      __in_opt REFERENCE_TIME * pEndTime,
+                                      DWORD dwFlags);
+	virtual HRESULT Deliver(IMediaSample *);
+	virtual HRESULT InitAllocator(__deref_out IMemAllocator **ppAlloc);
+	virtual HRESULT DeliverEndOfStream(void);
+	virtual HRESULT DeliverBeginFlush(void);
+    virtual HRESULT DeliverEndFlush(void);
+	virtual HRESULT DeliverNewSegment(
+                        REFERENCE_TIME tStart,
+                        REFERENCE_TIME tStop,
+                        double dRate);
 
 
 
@@ -159,6 +171,10 @@ protected:
 
 	virtual HRESULT InitializeMediaType();
 	IMemInputPin *GetIMemInput() {return m_pInputPin;};
+
+public:
+	// for debugging
+	void CheckConnectedTo();
 
 };
 
